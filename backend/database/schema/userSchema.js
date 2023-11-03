@@ -8,6 +8,7 @@ const userSchema = new mongoose.Schema({
     email:String,
     profilePic:String,//just have the file path
     profileURL:String,
+    verified:Boolean,
 })
 
 module.exports = {userSchema}
