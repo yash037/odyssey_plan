@@ -5,7 +5,7 @@ const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const GithubStartegy = require('passport-github2').Strategy;
 const { sendMail } = require('./sendVerification');
 
-
+const axios = require('axios')
 const mongoose = require('mongoose');
 const User = mongoose.model('User',require('../../../database/schema/userSchema').userSchema);
 
