@@ -9,7 +9,6 @@ export default function LocalLogger(){
     }
     return(
     <>
-      
         {register==true?<LocalLoging></LocalLoging>:<LocalRegister></LocalRegister>}
         <button onClick={handleClick}>{register==true?registerText:loginText}</button>
     </>
@@ -39,7 +38,7 @@ export function LocalRegister(){
             setVerificationSent(true);
             setVerificationMessage(res.data);
         }
-        console.log(res);
+       
         setEmail('');
         setPassword('');
         setUsername('');

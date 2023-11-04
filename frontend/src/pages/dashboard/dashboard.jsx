@@ -2,7 +2,7 @@ import { send , backendURL , frontendURL} from '../../global/request'
 
 export default function DashBoard(){
     const handleLogout = () => {
-        send.get(backendURL+'/logout').then(
+        send.get(backendURL+'/auth/logout').then(
             (res)=>{
                 if(res.status==200){
                     console.log('logining out');
