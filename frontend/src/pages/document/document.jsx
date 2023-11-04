@@ -9,8 +9,7 @@ export default function DocumentEditor () {
     return ( 
         <BrowserRouter>
              <Routes>
-                <Route path='/' exact element={<Redirect></Redirect>}>
-                    
+                <Route path='/' exact element={<Redirect></Redirect>}>  
                 </Route>
                 <Route path='/documents/:id' exact element={<TextEditor></TextEditor>} /> 
             </Routes>

@@ -33,7 +33,25 @@ export default function TextEditor () {
         socket.emit( 'join-document-room' , documentId )
 
     },[socket , quill, documentId])
-
+    useEffect( //this effect save's the file before we unload 
+        () => {
+            if(socket == null || quill == null) {
+                return
+            }
+            const handler = () => {
+                socket.emit('save-document' , documentId , quill.getContents() );
+            }
+            window.addEventListener('unload' , handler );
+            window.addEventListener('beforeunload' , handler);
+            return (
+                () => {
+                    window.removeEventListener('unload', handler);
+                    window.removeEventListener('beforeunload' , handler)
+                }
+            )
+        },
+        [socket ,quill]
+    )
     useEffect(() => {//effect to detect delta's and
         if( quill==null || socket == null ){
             return ; 
