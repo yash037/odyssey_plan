@@ -7,6 +7,6 @@ import DocumentEditor from './pages/document/document.jsx'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <DocumentEditor/>
+    <App/>
   </React.StrictMode>,
 )

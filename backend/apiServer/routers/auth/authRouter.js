@@ -8,6 +8,7 @@ const { passport } = require('./utils/passport')
 const session = require('express-session');
 const bcrypt = require('bcrypt');
 const { sendMail } = require('./utils/sendVerification');
+const { frontendURL } = require('../../global/request');
 
 authRouter.use(session({
     secret:process.env.SESSION_SECRET,
@@ -89,9 +90,11 @@ authRouter.get('/login',(req,res)=>{
     //fallback for all authentication
     
   })
-authRouter.get('/auth/success' , (req , res) => {
+authRouter.get('/success' , (req , res) => {
+  console.log(req.isAuthenticated());
+  console.log(req.user)
   res.cookie( 'userId' , req.user.Id ); //set's the userId as a cookie for the auth server to identify the user as
-  res.status(200).send('successfully authenticated')
+  res.redirect(frontendURL)
 })
 authRouter.get('/status',(req,res)=>{
   res.send(req.isAuthenticated());
