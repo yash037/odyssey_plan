@@ -31,8 +31,8 @@ authRouter.get('/logout',(req,res)=>{
   }
 })
 
-authRouter.get('/google',passport.authenticate('google',{successRedirect:'/auth/success',failureRedirect:'/login',scope:['profile','email']}))
-authRouter.get('/github',passport.authenticate('github',{successRedirect:'/auth/success',failureRedirect:'/login',scope:['user','user:email','read:user']}))
+authRouter.get('/google',passport.authenticate('google',{successRedirect:'/',failureRedirect:'/login',scope:['profile','email']}))
+authRouter.get('/github',passport.authenticate('github',{successRedirect:'/',failureRedirect:'/login',scope:['user','user:email','read:user']}))
 
 authRouter.post('/register',async (req,res,next)=>{
   //send email from here
@@ -68,7 +68,6 @@ authRouter.post('/register',async (req,res,next)=>{
 authRouter.get('/local',passport.authenticate('local',{failureRedirect:'/auth/localfailure',successRedirect:'/auth/localsuccess',failureFlash:true}
 ));
 authRouter.get('/localsuccess',(req,res)=>{
-  res.cookie('userId' , req.user.Id);
   res.status(200).send('logged in successfully!!');   
 })
 authRouter.get('/localfailure',(req,res)=>{
@@ -89,10 +88,6 @@ authRouter.get('/login',(req,res)=>{
     //fallback for all authentication
     
   })
-authRouter.get('/auth/success' , (req , res) => {
-  res.cookie( 'userId' , req.user.Id ); //set's the userId as a cookie for the auth server to identify the user as
-  res.status(200).send('successfully authenticated')
-})
 authRouter.get('/status',(req,res)=>{
   res.send(req.isAuthenticated());
 })
