@@ -6,7 +6,9 @@ import io from 'socket.io-client'
 import { useParams } from 'react-router-dom'
 import QuillCursors from 'quill-cursors';
 import { useCookies } from 'react-cookie'
+import color from '../utils/colorSchemes'
 Quill.register('modules/cursors', QuillCursors);
+
 
 export default function TextEditor () {
     const [ socket , setSocket ] = useState();
@@ -14,12 +16,14 @@ export default function TextEditor () {
     const [ cursors , setCursors ] = useState();
     const {id : documentId} = useParams(); //getting the document room id
     const [ ownId , setOwnId ] = useState();
+    const [colors , setColors] = useState(color)
     const [ cookie ] = useCookies(['']);
+    
     useEffect(
-        () => {
+        () => { //get's  and set's the ID
             const id = cookie.userId;
             setOwnId(id);
-            //console.log(id);
+            
         }
         ,
         []
@@ -40,65 +44,71 @@ export default function TextEditor () {
         if(socket == null || quill == null || cursors == null){
             return ;
         }
-        socket.once('load-document' , ( document , activeMembers ) => {
+        socket.once('load-document' , ( document , activeMembers ) => { //wait's for the server to retrieve the document and loads it
             quill.setContents(document);
-            quill.enable();
-            for(let i in activeMembers){
-                 console.log(activeMembers[i])
+            quill.enable(); 
+            for(let i in activeMembers){ //create cursor's for all the previously joined members
                 cursors.createCursor( activeMembers[i].Id , activeMembers[i].name , 'orange')
             }
         })
-        const newMemberHandler = (memberId , name) => {
+        const newMemberHandler = (memberId , name) => { //create cursor for new member on joining
             if(memberId == ownId){
-                
                 return ;
             }
-            cursors.createCursor(memberId , name , 'red')
+            let i = 0;
+            for(i = 0 ; i < colors.length ; i++){
+                if( colors[i].occupied == false ){ //associate a color with each guy
+                    color.occupied = true;
+                    break ;
+                }
+            }
+
+            cursors.createCursor(memberId , name , colors[i].color )
         }
-        const movementHandler = ( memberId , selection ) => {
-           
+        const movementHandler = ( memberId , selection ) => { // move remote user's cursor
+            console.log(memberId)
             cursors.moveCursor(memberId , selection)
             console.log(cursors.cursors())
         }
-        const memberLeftHandler = (memberId) => {
+        const memberLeftHandler = (memberId) => { //remove a cursor once the user leave's
             cursors.removeCursor( memberId )
         }
 
-        socket.emit( 'join-document-room' , documentId , ownId)
-        socket.on( 'new-member-joined' , newMemberHandler)
+        socket.emit( 'join-document-room' , documentId , ownId)  
+        socket.on( 'new-member-joined' , newMemberHandler)  //set the handler's to their events
         socket.on( 'member-left' ,  memberLeftHandler)
         socket.on( 'cursor-movement' , movementHandler)
 
         return (
             () => {
-                socket.on( 'new-member-joined' , newMemberHandler)
+                socket.on( 'new-member-joined' , newMemberHandler) //cleanup
                 socket.on( 'member-left' ,  memberLeftHandler)
                 socket.on( 'cursor-movement' , movementHandler)
             }
         )
 
     },[socket , quill, documentId , cursors])
-    useEffect( //this effect save's the file before we unload 
+    useEffect( //this effect save's the file before we unload and tell's the user to delete the docs
         () => {
             if(socket == null || quill == null) {
                 return
             }
             const handler = () => {
-                socket.emit('save-document' , documentId , quill.getContents() );
-                socket.emit( 'member-left' , documentId , ownId );
+                socket.emit('save-document' , documentId , quill.getContents() ); //event to save the document in the backend
+                socket.emit( 'member-left' , documentId , ownId ); //event to inform other peers to delete the cursor
             }
-            window.addEventListener('unload' , handler );
+            window.addEventListener('unload' , handler ); 
             window.addEventListener('beforeunload' , handler);
             return (
                 () => {
-                    window.removeEventListener('unload', handler);
+                    window.removeEventListener('unload', handler); //cleanup
                     window.removeEventListener('beforeunload' , handler)
                 }
             )
         },
         [socket , quill]
     )
-    useEffect(() => {//effect to detect delta's and
+    useEffect(() => {//effect to detect delta's and send it to other peers
         if( quill==null || socket == null ){
             return ; 
         } 
@@ -111,12 +121,12 @@ export default function TextEditor () {
             quill.updateContents( delta );
         }
 
-        quill.on('text-change' , quillHandler );
+        quill.on('text-change' , quillHandler ); //set event's to their handler's
         socket.on('recieve-change' , socketHandler );
 
         return (
             () => {
-                quill.off( 'text-change' , quillHandler )
+                quill.off( 'text-change' , quillHandler ) //cleanup
                 socket.off( 'recieve-change' , socketHandler )
             }
         )
