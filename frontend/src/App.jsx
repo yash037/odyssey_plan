@@ -8,6 +8,9 @@ import Auth from "./pages/auth/auth";
 import { send } from './global/request'
 import { useState , useEffect } from "react";
 
+import DocumentEditor from './pages/document/document'
+import Redirect from "./pages/document/component/redirect";
+
 function App() {
   
   const [user,setUser]=useState(null);
@@ -61,7 +64,9 @@ function App() {
       <>
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<DashBoard/>}></Route>
+            <Route path="/" element={<DashBoard></DashBoard>}/>
+            <Route path='/documents' exact element={<Redirect></Redirect>}/>  
+            <Route path='/documents/:id' exact element={<DocumentEditor></DocumentEditor>} /> 
           </Routes>
         </BrowserRouter>
       </>
