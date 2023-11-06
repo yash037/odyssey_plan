@@ -39,6 +39,7 @@ passport.use(new GithubStartegy({
 },
 async(accesstoken,refreshtoken,profile,done)=>{
   //these accesstoken and refreshtoken cannot be used by us so that's a problem
+  console.log(profile)
   const headers = {
     'Authorization': 'token '+accesstoken,
   };
@@ -53,12 +54,15 @@ async(accesstoken,refreshtoken,profile,done)=>{
     }
   }
   const userEmail = res.data[i].email;
-  var user=await User.findOne({email:userEmail});
+  var user = await User.findOne({email:userEmail});
 
   if(user == null){
     await User.create({Id:profile.id,username:profile.username,email:userEmail,profileURL:profile.profileUrl,profilePic : profile.photos[0].value}); 
   }
   user = await User.findOne({Id:profile.id});
+  console.log(user)
+  console.log(user.profilePic)
+  console.log(user.profileURL)
   user.profileURL = profile.profileUrl;
   user.profilePic = profile.photos[0].value;
   await user.save();
