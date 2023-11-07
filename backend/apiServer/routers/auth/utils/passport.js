@@ -70,7 +70,7 @@ passport.use(new LocalStrategy({usernameField:'username',passwordField:'password
     const user=await User.findOne({username:username});
     console.log("here");
     if( user == null ){
-        done(null,false,{message:"no such user exists"});
+        done(null,false,{message:"Invalid Username or Password"});
     }
     else{
       const flag = await bcrypt.compare(password,user.password);
@@ -82,20 +82,20 @@ passport.use(new LocalStrategy({usernameField:'username',passwordField:'password
          
             const flag = await sendMail(user.email , user.Id);
             if(flag==false){
-                done(null,false,{message : "verification email has been sent"});
+                done(null,false,{message : "Verification Email Sent!"});
             }
             else{
-                done(null,false,{message : "could not send verification email"})
+                done(null,false,{message : "Email verification failed. Please try again later."})
             }
         }
         else{
-          done(null,false,{message:"password is incorrect"});
+          done(null,false,{message:"Incorrect Password"});
         }  
       }   
     }  
 }
 catch{
-    done(null,false,{message:"something went wrong"});
+    done(null,false,{message:"Something went wrong."});
 }
 }));
 

@@ -75,7 +75,6 @@ function App() {
   else{
     return (
       <>
-        THIB akpspdmas
         <Auth></Auth>
       </>
     )
