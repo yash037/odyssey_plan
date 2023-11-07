@@ -19,11 +19,14 @@ export default function DashBoard(){
     const handleDocument = () => {
        history('/documents')
     }
+
     return (
-        <div>
-            If you are seeing this you are logged in 
-            <button onClick={handleLogout}>Logout</button>
-            <button onClick={handleDocument}>Go to Doucment</button>
+        <div className='message'>
+            <p>If you are seeing this, you are logged in</p>
+            <button onClick={handleLogout} >Logout</button>
+            <button onClick={handleDocument} >Go to Document</button>
         </div>
+
+
     )
 }

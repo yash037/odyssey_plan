@@ -1,0 +1,145 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600&family=Poppins:wght@200&display=swap');
+
+html {
+  font-size: 16px;
+  font-family: 'Noto Sans', sans-serif;
+}
+
+.register-button {
+  background-color: #353d97;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.login-inner,
+.inner-login-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin-bottom: 0.3125rem;
+  flex-direction: column;
+  background-color: #353d97;
+}
+
+.login-form {
+  background-color: #ffffff;
+  border: 0.03125rem solid #a4a4a4;
+  padding: 1.25rem;
+  border-radius: 0.625rem;
+  box-shadow: 0px 0.3125rem 0.9375rem rgba(0, 0, 0, 0.1);
+  width: 18.75rem;
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+  margin-bottom: 1.25rem;
+}
+
+.login-form.register {
+  box-shadow: 0px 0.3125rem 0.9375rem #a4a4a4;
+}
+
+.login-form.login {
+  box-shadow: 0px 0.3125rem 0.9375rem #a4a4a4;
+}
+
+h1 {
+  color: #4285F4;
+}
+
+label {
+  color: #000000;
+  margin-bottom: 0.5rem;
+  text-align: left;
+  display: block;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="email"] {
+  padding: 0.75rem;
+  margin-bottom: 0.9375rem;
+  border: 0.0625rem solid #ccc;
+  border-radius: 0.3125rem;
+  width: 100%;
+}
+
+input[type="submit"] {
+  background-color: #4285F4;
+  color: #fff;
+  border: none;
+  padding: 0.625rem 0.9375rem;
+  border-radius: 0.3125rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-top: 0.625rem;
+}
+
+input[type="submit"]:hover {
+  background-color: #3579D8;
+}
+
+.msgContainer {
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+}
+
+.msgButton {
+  background: none;
+  border: none;
+  padding: 0.125rem;
+  cursor: pointer;
+  color: rgb(0, 255, 221);
+  text-decoration: underline;
+  font-weight: 650;
+}
+
+.error {
+  font-size: 0.875rem;
+  text-align: right;
+  color: #c52c43;
+  font-family: 'Noto Sans', sans-serif;
+}
+
+button {
+  background-color: #ffffff;
+  color: #333;
+  border: 0.0625rem solid #333;
+  padding: 0.625rem 1.25rem;
+  border-radius: 0.3125rem;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+  margin-top: 0.3125rem;
+}
+
+.google:hover, .github:hover, .googleimg:hover {
+  background-color: #d4d4d4;
+  color: #000000;
+}
+
+.google, .github {
+  width: 18.65rem;
+}
+
+.github {
+  margin-bottom: 1.25rem;
+}
+
+.googleimg, .githubimg {
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-right: 0.625rem;
+  border-radius: 1rem;
+  transform: translateY(0.1875rem);
+}
+
+.icon {
+  width: 6.25rem;
+  font-family: 'Noto Sans', sans-serif;
+}
+
+.heading {
+  color: #fff;
+}
