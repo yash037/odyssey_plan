@@ -1,0 +1,34 @@
+@import url('https://fonts.googleapis.com/css2?family=Chivo+Mono:ital,wght@1,200&family=Nunito&family=Nunito+Sans:ital,opsz,wght@0,6..12,400;1,6..12,200&display=swap');
+.KanbanStyleBoard{
+    display: flex;
+    flex-direction: row;
+}
+.drop-list{
+    font-family: 'Nunito Sans', sans-serif;
+    margin: 20px;
+}
+
+.list-color{
+    height: 4px;
+    border-radius: 10px;
+}
+.list-title{
+    display: flex;
+    flex-direction: row;
+    font-size: 20px;
+}
+.list-title-inner{
+    margin: 15px;
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    background-color: antiquewhite;
+}
+.list-header{
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+.draggable-div{
+    border-radius: 10px;
+    margin: 10px 0 ;
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.1);
+}
