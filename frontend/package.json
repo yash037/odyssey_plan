@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@blocknote/core": "^0.9.6",
+    "@blocknote/react": "^0.9.6",
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.14.16",
     "@mui/material": "^5.14.16",
@@ -23,6 +25,7 @@
     "react-modern-calendar-datepicker": "^3.1.6",
     "react-router-dom": "^6.18.0",
     "socket.io-client": "^4.7.2",
+    "tus-js-client": "^3.1.1",
     "uuid": "^9.0.1"
   },
   "devDependencies": {
