@@ -69,11 +69,13 @@ authRouter.post('/register',async (req,res,next)=>{
 authRouter.get('/local',passport.authenticate('local',{failureRedirect:'/auth/localfailure',successRedirect:'/auth/localsuccess',failureFlash:true}
 ));
 authRouter.get('/localsuccess',(req,res)=>{
-  res.cookie('userId' , req.user.Id);
-  res.status(200).send('You have successfully logged in!');   
+
+  res.cookie('userId' ,'a' + req.user.Id ); //quick workaround
+  res.status(200).send('logged in successfully!!');   
+
 })
 authRouter.get('/localfailure',(req,res)=>{
- 
+ s
   const failureMessage = req.flash('error')[0];
   res.status(201).send(failureMessage)
 })
@@ -93,7 +95,7 @@ authRouter.get('/login',(req,res)=>{
 authRouter.get('/success' , (req , res) => {
   console.log(req.isAuthenticated());
   console.log(req.user)
-  res.cookie( 'userId' , req.user.Id ); //set's the userId as a cookie for the auth server to identify the user as
+  res.cookie( 'userId' , 'a' + req.user.Id ); //quick workaround
   res.redirect(frontendURL)
 })
 authRouter.get('/status',(req,res)=>{

@@ -5,7 +5,7 @@ export const send=axios.create({
 });
 
 export const backendURL = 'http://localhost:8000'
-
+export const mediaUploadURL = 'http://localhost:1080'
 export const frontendURL = 'http://localhost:3000'
 
 

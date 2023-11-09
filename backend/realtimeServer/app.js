@@ -25,9 +25,9 @@ io.on('connection' , (socket) => {
     })
 
     socket.on( 'join-document-room' , async ( documentId  , memberId ) => {
-        console.log(memberId)
+        
         var data = await Document.findOne( { Id : documentId } )
-        const user = await User.findOne( { Id : memberId } );
+        const user = await User.findOne( { Id : memberId.substr( 1 , memberId.length - 1 ) } );
 
         if( data == null ){
             data = await Document.create( { Id : documentId , data : '' } );
@@ -40,7 +40,7 @@ io.on('connection' , (socket) => {
         await data.save();
         socket.join(documentId);
         socket.emit('load-document' , data.data , data.activeMembers)
-        socket.broadcast.to(documentId).emit( 'new-member-joined' , memberId , user.username )
+        socket.broadcast.to(documentId).emit( 'new-member-joined' , memberId.substr( 1 , memberId.length - 1 ) , user.username )
         
     })
 
@@ -56,12 +56,12 @@ io.on('connection' , (socket) => {
             return data.Id != documentId
         })
         await doc.save()
-        socket.broadcast.to(documentId).emit( 'member-left' , memberId);
+        socket.broadcast.to(documentId).emit( 'member-left' , memberId.substr( 1 , memberId.length - 1 ));
     })
 
     socket.on( 'cursor-movement' , ( documentId , memberId , selection) => {
-         console.log(memberId + ' moved')
-        socket.to(documentId).emit( 'cursor-movement' , memberId , selection );
+         console.log(memberId.substr( 1 , memberId.length - 1 ) + ' moved')
+        socket.to(documentId).emit( 'cursor-movement' , memberId.substr( 1 , memberId.length - 1 ) , selection );
     })
 })
 
