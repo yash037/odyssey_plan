@@ -1,7 +1,11 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-
-import DashBoard from "./pages/dashboard/dashboard";
+import Boards from './pages/dashboard/Boards';
+import Templates from './pages/dashboard/Templates';
+import Kanban from './pages/dashboard/Kanban';
+import Editor from './pages/dashboard/Editor';
+import Calendar from './pages/dashboard/Calendar';
+import DashBoard from "./pages/dashboard/Dashboard";
 import Auth from "./pages/auth/auth";
 
 
@@ -64,6 +68,11 @@ function App() {
       <>
         <BrowserRouter>
           <Routes>
+            <Route path="/boards" exact element={<Boards />}></Route>
+            <Route path="/templates" exact element={<Templates />}></Route>
+            <Route path="/calendar" exact element={<Calendar />}></Route>
+            <Route path="/kanban" exact element={<Kanban />}></Route>
+            <Route path="/editor" exact element={<Editor />}></Route>
             <Route path="/" element={<DashBoard></DashBoard>}/>
             <Route path='/documents' exact element={<Redirect></Redirect>}/>  
             <Route path='/documents/:id' exact element={<DocumentEditor></DocumentEditor>} /> 
