@@ -36,6 +36,12 @@
   app.use(passport.initialize());
   app.use(passport.session());
   app.use('/auth', authRouter)
+  
+
+  //-----------------data serving--------------------------
+  const dataRouter = require('./routers/dataSavers/dataRouter')
+  app.use('/data' , dataRouter)
+
   //------------------ general all purpose end points -------
   
   app.get('/user',(req,res)=>{

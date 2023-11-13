@@ -5,14 +5,35 @@ import DroppableList from './DropableList';
 import './css/KanbanBoard.css'
 import CapsuleButton from './CapsuleButton';
 import TaskEditor from './TaskEditor';
+import { backendURL, send } from '../../../global/request';
+import AddBoard from './AddBoard';
 
 const colors = [ 'red' , 'yellow' , 'blue' , 'green' , 'purple' , 'pink'];
 
-function KanbanStyleBoard( { data } ) {
+function KanbanStyleBoard( { data , databaseId } ) {
   const [boardData, setBoardData] = useState(data);
   const [ taskEditorActive , setTaskEditorActive ] = useState(true);
   const [ idTrack , setIdTrack ] = useState(100);
-
+ 
+  useEffect(()=>{ //listen's to change's in prop
+    //caused some isssus beware!!
+    setBoardData(data)
+  },[data])
+  
+  useEffect(()=>{
+    return(
+      ()=>{
+          console.log(boardData)
+          send.post(backendURL + '/data/saveContent' , {
+            data : {
+                  databaseId : databaseId,
+                  content :  boardData,
+                  filetype :  'note',
+              }
+            })
+          }
+        )
+    },[boardData,databaseId])
 
   function handleOnDragEnd(result) {
     const { destination, source } = result;
@@ -56,16 +77,18 @@ function KanbanStyleBoard( { data } ) {
     
   }
  
-  const handleDeleteTask = ( boardIndex , elementIndex , change ) => {
+  const handleDeleteTask = ( boardIndex , elementIndex  ) => {
     boardData[boardIndex].data.splice(elementIndex,1)
     setIdTrack((id)=>(id + 1)) //workaround for some bug
     //something is wrong with state
   }
+  
   return (
     <div className="KanbanStyleBoard">
         <DragDropContext onDragEnd={handleOnDragEnd}>
+         
         {
-            data.map((data , index) => (
+            boardData.map((data , index) => (
                 <div key={index} className='drop-list'>
                     <div className='list-header'>
                         <div className='list-color' style={{backgroundColor:colors[index]}}></div>
@@ -96,6 +119,10 @@ function KanbanStyleBoard( { data } ) {
         }
 
         </DragDropContext>
+        <AddBoard 
+        setBoardData={setBoardData} 
+        boardData={boardData}
+        />
         <div className='task-editor-div'>
           
              {

@@ -4,11 +4,9 @@ import { v4 as uuid } from "uuid";
 import { backendURL, send } from '../../../global/request'
 import "@blocknote/core/style.css";
 import { useEffect, useState } from "react";
-import { backdropClasses } from "@mui/material";
 
-const demo = '### this is a heading some data'
 export default function NoteEditor({data , databaseId}) {
-    const  [ markdown , setMarkdown ] = useState( demo ) 
+    const  [ markdown , setMarkdown ] = useState( data )
     const saveBlocksAsMarkdown = async (editor) => {
       const newMarkdown = await editor.blocksToMarkdown(editor.topLevelBlocks);
       setMarkdown(newMarkdown);
@@ -17,7 +15,7 @@ export default function NoteEditor({data , databaseId}) {
       uploadFile : async (uploadFile) => {
           const formData = new FormData();
           formData.append('file', uploadFile);
-
+  
           const id = uuid()
           const res = await send.post('http://localhost:3002/serve/api/upload', formData, {
             headers: {
@@ -35,25 +33,47 @@ export default function NoteEditor({data , databaseId}) {
         saveBlocksAsMarkdown(editor)
       },
       onEditorReady : async () => {
-        const data = await editor.markdownToBlocks(markdown)
-        editor.replaceBlocks(editor.topLevelBlocks, data )
+        const content = await editor.markdownToBlocks(markdown)
+        editor.replaceBlocks(editor.topLevelBlocks, content )
       }
-  })
-  useEffect(()=>{
+    }
+    )
+    useEffect(
+      () => {
+        const update = async (text) => {
+          const content = await editor.markdownToBlocks(text)
+          editor.replaceBlocks(editor.topLevelBlocks, content )
+        }
+        console.log(data)
+        update(data)
+        setMarkdown(data)
+      },
+      [ data ]
+    )
+    useEffect(
+      () => {
+        
+      },[markdown]
+    )
+    useEffect(()=>{
       return(
         ()=>{
-          send.post(backendURL + '/saveData' , {
-             data : {
-                databaseId : databaseId,
-                markdown :  markdown,
-                filetype :  'note',
-             }
-          })
-        }
-      )
-  },[])
+
+            send.post(backendURL + '/data/saveContent' , {
+              data : {
+                    databaseId : databaseId,
+                    content :  markdown,
+                    filetype :  'note',
+                }
+              })
+            }
+          )
+      },[markdown,databaseId])
+    
+    
   
- 
+  
+    
 
   return (
     <>
