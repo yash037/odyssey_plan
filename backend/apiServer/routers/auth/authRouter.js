@@ -54,23 +54,25 @@ authRouter.post('/register',async (req,res,next)=>{
     })
     const flag = await sendMail(data.email,data.Id);
     if(flag == true){
-        res.status(200).send('email has been sent for verification')
+        res.status(200).send('Verification email sent. Please check your inbox.')
     }
     else{
         await User.deleteOne({Id:data.Id});
-        res.status(200).send('could not create something went wrong')
+        res.status(200).send('Creation failed. An issue occurred.')
     }
   }
   else{
-    res.status(200).send('already exist');
+    res.status(200).send('User already exist');
   }
 })
 
 authRouter.get('/local',passport.authenticate('local',{failureRedirect:'/auth/localfailure',successRedirect:'/auth/localsuccess',failureFlash:true}
 ));
 authRouter.get('/localsuccess',(req,res)=>{
+
   res.cookie('userId' ,'a' + req.user.Id ); //quick workaround
   res.status(200).send('logged in successfully!!');   
+
 })
 authRouter.get('/localfailure',(req,res)=>{
  s
@@ -83,7 +85,7 @@ authRouter.get('/verify',async(req,res)=>{
 
   user.verified = true;
   await user.save();
-  res.send('you have been verified');
+  res.send('Verification successful.');
   
 })
 authRouter.get('/login',(req,res)=>{

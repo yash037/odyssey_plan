@@ -1,20 +1,24 @@
 import {send,frontendURL,backendURL} from '../../../global/request'
 import { useState } from 'react';
+import GoogleLogger from "./GoogleLogin"
+import GithubLogger from "./GithubLogin"
+import Icon from'../../../assets/icon.jpg'
+import './auth.css';
+
 export default function LocalLogger(){
     const [register,setRegister] = useState(true);
-    const registerText = 'register'
-    const loginText = 'sign in'
     const handleClick = () => {
         setRegister(!register);
     }
     return(
     <>
-        {register==true?<LocalLoging></LocalLoging>:<LocalRegister></LocalRegister>}
-        <button onClick={handleClick}>{register==true?registerText:loginText}</button>
+        <div className='register-button'>
+        {register==true?<LocalLoging handleClick={handleClick}/>:<LocalRegister handleClick={handleClick}/>}
+        </div>
     </>
     )
 }
-export function LocalRegister(){
+export function LocalRegister({handleClick}){
     const [username,setUsername] = useState('');
     const [password,setPassword] = useState('');
     const [email,setEmail] = useState('');
@@ -53,27 +57,43 @@ export function LocalRegister(){
         setPassword(e.target.value);
     }
     return (
+        //Register Page start
+
         <div>
-            <form action="/from" method="post" >
-                <label htmlFor="username">Username:</label>
-                <input type="text" id="username" name="username" required onChange={handleUsernameChange} value={username}/>
-                <br/><br/>
-                
-                <label htmlFor="password">Password:</label>
-                <input type="password" id="password" name="password" required onChange={handlePasswordChange} value={password}/>
-                <br/><br/>
-                
-                <label htmlFor="email">Email:</label>
-                <input type="email" id="email" name="email" required onChange={handleEmailChange} value={email}/>
-                <br/><br/>
-                {verificationSent&&<h1>{verificationMessage}</h1>}
-                <input type="submit" value="Register" onClick={handleSubmit}/>
-            </form>
+            <div className='login-inner'>
+
+            <img src={Icon} alt="Icon" className='icon' />
+            <h1 className="heading">
+                Create an account
+            </h1>
+
+                    <form className="login-form" action="/from" method="post" >
+                        <label htmlFor="username">Username</label>
+                        <input type="text" id="username" name="username" required onChange={handleUsernameChange} value={username} placeholder='Enter your username'/>
+                        
+                        
+                        <label htmlFor="email">Email</label>
+                        <input type="email" id="email" name="email" required onChange={handleEmailChange} value={email} placeholder='Enter your email'/>
+
+                        <label htmlFor="password">Password</label>
+                        <input type="password" id="password" name="password" required onChange={handlePasswordChange} value={password} placeholder='********'/>
+                        
+                            {verificationSent&&<div className="error">{verificationMessage}</div>}
+                        
+                        
+                        <input type="submit" value="Sign Up" onClick={handleSubmit}/>
+                    </form>
+                    <GoogleLogger></GoogleLogger>
+                    <GithubLogger></GithubLogger>
+                    <div className='msgContainer'>
+                        <button onClick={handleClick} className='msgButton'>Already have an account?</button>
+                    </div>
+                </div>
         </div>
     )
 }
 
-export function LocalLoging(){
+export function LocalLoging({handleClick}){
     const [username,setUsername] = useState('');
     const [password,setPassword] = useState('');
     const [data,setData] = useState('');
@@ -106,17 +126,35 @@ export function LocalLoging(){
     }
     return (
         <div>
-            <form action={backendURL+'/auth/local'} method="get" >
-                <label htmlFor="username">Username:</label>
-                <input type="text" id="username" name="username" required onChange={handleUsernameChange} value={username}/>
-                <br/><br/>
+            
+            <div className='inner-login-page'>
+            <img src={Icon} alt="Icon" className='icon' />
+            <h1 className="heading">
+                Welcome back!
+            </h1>
+            <form action={backendURL+'/auth/local'} method="get" className="login-form">
+                <label htmlFor="username">Username</label>
+                <input type="text" id="username" name="username" required onChange={handleUsernameChange} value={username} placeholder='Enter your username'/>
+    
                 
-                <label htmlFor="password">Password:</label>
-                <input type="password" id="password" name="password" required onChange={handlePasswordChange} value={password}/>
-                <br/><br/>
-                {data}
-                <input type="submit" value="Register" onClick={handleSubmit}/>
+                <label htmlFor="password">Password</label>
+                <input type="password" id="password" name="password" required onChange={handlePasswordChange} value={password} placeholder='********'/>
+                
+
+                <div className="error">
+                    {data}
+                </div>
+
+                <input type="submit" value="Sign In" onClick={handleSubmit}/>
             </form>
+            <GoogleLogger></GoogleLogger>
+            <GithubLogger></GithubLogger>
+            <div className='msgContainer'>
+                <p>Need an account?</p>
+                <button onClick={handleClick} className='msgButton'>Sign In</button>
+            </div>
+            </div>
         </div>
+
     )
 }

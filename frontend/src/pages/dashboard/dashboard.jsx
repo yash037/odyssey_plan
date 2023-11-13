@@ -14,6 +14,7 @@ export default function DashBoard(){
         () => {
             console.log( content.databaseId )
 
+
         },
         [content]
     )    
@@ -36,5 +37,6 @@ export default function DashBoard(){
             </div>
         </div>
         
+
     )
 }
