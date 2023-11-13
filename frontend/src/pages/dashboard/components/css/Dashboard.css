@@ -5,20 +5,18 @@
 }
 
 .navbar{
-    background-color: aqua;
     grid-area: 1 / 4 / 3 / 41;
 }
 
 .sidebar-div{
-    background-color: brown;
     grid-area: 3 / 4 / 41 / 11;
 }
 .workspace-sidebar{
-    background-color: blue;
     grid-area: 1 / 1 / 41 / 4;
 }
 
 .content-div{
     position: relative;
     grid-area: 3 / 11 / 41 / 41;
+    background-color: #313338;
 }

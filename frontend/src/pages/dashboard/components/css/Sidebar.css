@@ -1,6 +1,7 @@
 .sidebar-div{
     display: flex;
     flex-direction: column;
+    background-color: #2B2D31;
 }
 .recursive-sidebar{
     width: 100%;
@@ -15,7 +16,7 @@
 .workspace-sidebar{
   display: flex;
   flex-direction: column;
-  background-color: aquamarine;
+  background-color: #1E1F22;
 }
 
 .workspace-icon{

@@ -7,6 +7,7 @@
     font-family: 'Nunito Sans', sans-serif;
     margin: 20px;
     flex-grow: 1;
+    
 }
 
 .list-color{
@@ -25,14 +26,17 @@
     background-color: antiquewhite;
 }
 .list-header{
-    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 6px 8px rgba(250, 245, 245, 0.398);
     border-radius: 10px;
+    background-color: white
 }
 .draggable-div{
     border-radius: 10px;
     margin: 10px 0 ;
-    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 6px 8px rgba(250, 245, 245, 0.398);
     display: flex;
+    background-color: white
+    
 }
 .draggable-div p {
     margin:  0 auto ;
@@ -61,6 +65,7 @@
 .add-board-modal{
     height: 30vh;
     width: 40vw;
+    margin: 40vh auto ;
 }
 
 .add-board-modal input{
