@@ -1,0 +1,134 @@
+import CapsuleButton from "./CapsuleButton"
+import { Card , CardActions ,CardHeader , CardContent , IconButton  , ButtonGroup, MenuItem } from '@mui/material'
+import TextArea from './TextArea'
+import Input  from "./Input";
+import CloseIcon from '@mui/icons-material/Close';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import FlagIcon from '@mui/icons-material/Flag';
+import SupportIcon from '@mui/icons-material/Support';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+
+import DropdownMenu from "./DropdownMenu";
+import Calendar from './CalanderStyled'
+import { useEffect, useState } from "react";
+
+//done for modularity
+const priorityData = ['procrastinate' , 'low' , 'medium' , 'high']; //array of priority
+const kanbanData = ['Backlog' , 'Doing' , 'Review' , 'Done']; // array of kanban 
+const colors = [ 'red' , 'yellow' , 'blue' , 'green' , 'purple' , 'pink']; //array of colors
+
+export default function TaskEditor({ setTaskEditorActive,setBoardData, boardData, setIdTrack, idTrack}){
+  const [date , setDate ] = useState(null);
+  const [ priority , setPriority ] = useState(0);
+  const [ kanban , setKanban ] = useState(0);
+  const [ title , setTitle ] = useState('');
+  const [text , setText ] = useState('');
+  const [anchorCal, setAnchorCal] = useState(null);
+  const [anchorFlag , setAnchorFlag] = useState(null);
+  const [anchorKanban , setAnchorKanban] = useState(null);
+    useEffect(()=> {
+        return (
+            ()=> {
+                console.log('editor has been dismounted')
+            }
+        )
+    }
+    ,[])
+  const handleMenuItemClick = ( stateSetter , anchorSetter , index ) => {
+    stateSetter(index);
+    anchorSetter(null);
+  }
+  const handleCreateClick = () => {
+    boardData[kanban].data = [...boardData[kanban].data , { 
+        id:idTrack.toString() ,
+        name : title ,
+        description : text,
+        date : date,
+        priority : priorityData[priority],
+    }]
+    console.log(boardData)
+    setBoardData(boardData)
+    setDate()
+    setPriority(0)
+    setKanban(0)
+    setTitle('')
+    setText('')
+    setIdTrack(idTrack + 1)
+  }
+  const handleClose = () => {
+    setTaskEditorActive(false)
+  }
+  return (
+    
+        <Card  sx={{height:'55vh', width: '30vw' , position : 'absolute' , left : '0' , top : '0'}}>
+            <CardHeader
+                subheader={<Input placeholder={'Type Here'} setInput={setTitle} value={title}></Input>}
+                action = {<IconButton onClick={handleClose}><CloseIcon></CloseIcon></IconButton>}
+            />
+            <CardContent>
+                <div className="text-editor-title">
+                    In    <div style={{display:'inline' , margin:'0 10%'}}><CapsuleButton> Something</CapsuleButton> </div>       For    <div style={{display:'inline' , marginLeft:'10%'}}><CapsuleButton> Something</CapsuleButton> </div>
+                </div>
+                <div>
+                    <TextArea setText={setText} value={text}></TextArea>
+                </div>
+            </CardContent>
+            <CardActions>
+                <ButtonGroup>
+                    <DropdownMenu icon={<CalendarMonthIcon style={{color : 'green'}}/>} popUp={true} anchorEl={anchorCal} setAnchorEl={setAnchorCal}>
+                        <MenuItem>
+                           {/* <Calendar date={date} setDate={(e) => {
+                            setDate(e==null?null:e)
+                            setAnchorCal(null);
+                           }}/> */}
+                           {
+                             'work under progress'
+                           }
+                        </MenuItem>
+                    </DropdownMenu>
+                    <DropdownMenu icon={<FlagIcon style={{color : 'purple'}}/>} popUp={true} anchorEl={anchorFlag} setAnchorEl={setAnchorFlag}>
+                        {
+                           priorityData.map(( data , index ) => {
+                                return (
+                                    <MenuItem key={`p${index}`} onClick={()=>{
+                                        handleMenuItemClick(setPriority,setAnchorFlag,index)
+                                    }}>
+                                        <FlagIcon  style={{color : colors[index]}}/>
+                                        {data}
+                                    </MenuItem>
+                                )
+                            })
+                        }
+                                  
+                    </DropdownMenu>
+                    <DropdownMenu icon={<SupportIcon style={{color : 'red'}}/>} popUp={true} anchorEl={anchorKanban} setAnchorEl={setAnchorKanban}>
+                        {
+                            boardData.map(( data , index ) => {
+                                return (
+                                    <MenuItem key={`k${index}`} onClick = { () => {handleMenuItemClick(setKanban,setAnchorKanban,index)}}>
+                                        <FlagIcon  style={{color : colors[index]}}/>
+                                        {data.name}
+                                    </MenuItem>
+                                )
+                            })
+                        }
+                                
+                    </DropdownMenu>
+                    
+                </ButtonGroup>
+                <IconButton sx={{position : 'absolute' , right : '2vw' ,color : 'gold'}} onClick={ ()=> {
+                    handleClose()
+                    handleCreateClick();
+                    
+                }}>
+                    <AddCircleIcon ></AddCircleIcon>
+                </IconButton>
+            </CardActions>
+        </Card>
+   
+    
+  );
+}
+
+
+

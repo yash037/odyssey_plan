@@ -1,0 +1,63 @@
+.sidebar-div{
+    display: flex;
+    flex-direction: column;
+    background-color: #2B2D31;
+}
+.recursive-sidebar{
+    width: 100%;
+    height: 40%;
+}
+
+
+.sidebar-button-group{
+ 
+}
+
+.workspace-sidebar{
+  display: flex;
+  flex-direction: column;
+  background-color: #1E1F22;
+}
+
+.workspace-icon{
+  margin: 4px auto;
+}
+.workspace-holder{
+  display: flex;
+  flex-direction: row;
+}
+.workspace-holder span{
+  background-color: white;
+  display: block;
+  height: 15%;
+  margin: auto 0 ;
+  width: 6px;
+  border-radius: 50%;
+}
+
+.workspace-holder:hover span {
+  background-color: white;
+  display: block;
+  height: 40%;
+  margin: auto 0 ;
+  width: 6px;
+  border-radius: 10px;
+}
+
+.active-workspace{
+  display: flex;
+  flex-direction: row;
+}
+.active-workspace span{
+  background-color: white;
+  display: block;
+  height: 80%;
+  margin: auto 0 ;
+  width: 6px;
+  border-radius: 10px;
+}
+
+.file-explorer-buttons{
+  display: flex;
+  flex-direction: row-reverse;
+}

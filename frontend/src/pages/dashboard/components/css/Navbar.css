@@ -1,0 +1,7 @@
+.navbar{
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    border-bottom: solid 4px #232428;
+    background-color: #1E1F22;
+}

@@ -1,4 +1,4 @@
-import TextEditor from './component/Editor'
+import TextEditor from './component/editor'
 import './documentStyles.css'
 
 export default function DocumentEditor () {
