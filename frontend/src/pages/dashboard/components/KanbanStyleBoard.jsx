@@ -1,13 +1,18 @@
-import { useState } from 'react';
+
+import { useEffect, useState } from 'react';
 import { DragDropContext } from 'react-beautiful-dnd';
 import DroppableList from './DropableList';
 import './css/KanbanBoard.css'
-
+import CapsuleButton from './CapsuleButton';
+import TaskEditor from './TaskEditor';
 
 const colors = [ 'red' , 'yellow' , 'blue' , 'green' , 'purple' , 'pink'];
 
-function KanbanStyleBoard({data}) {
+function KanbanStyleBoard( { data } ) {
   const [boardData, setBoardData] = useState(data);
+  const [ taskEditorActive , setTaskEditorActive ] = useState(true);
+  const [ idTrack , setIdTrack ] = useState(100);
+
 
   function handleOnDragEnd(result) {
     const { destination, source } = result;
@@ -30,9 +35,7 @@ function KanbanStyleBoard({data}) {
     
     var activeData = boardData[active].data
     var completeData = boardData[complete].data
-    
-   
-
+ 
     var activeIndex = source.index 
     var completeIndex = destination.index
    
@@ -52,7 +55,12 @@ function KanbanStyleBoard({data}) {
     setBoardData([...boardData])
     
   }
-
+ 
+  const handleDeleteTask = ( boardIndex , elementIndex , change ) => {
+    boardData[boardIndex].data.splice(elementIndex,1)
+    setIdTrack((id)=>(id + 1)) //workaround for some bug
+    //something is wrong with state
+  }
   return (
     <div className="KanbanStyleBoard">
         <DragDropContext onDragEnd={handleOnDragEnd}>
@@ -70,13 +78,39 @@ function KanbanStyleBoard({data}) {
                             </span>
                         </div>
                     </div>
-                    
-                    <DroppableList characters={data.data} name={data.name} index={index}/>
+                  <div className='kanban-board-content'>
+                    <DroppableList 
+                    characters={data.data} 
+                    name={data.name} 
+                    index={index} 
+                    handleDelete={handleDeleteTask} 
+                    setBoardData={setBoardData}/>
+                    <CapsuleButton text={'Add a Task'} handler={() => {
+                      setTaskEditorActive(!taskEditorActive)
+                    }}/>
+                  </div>  
+                   
                 </div>
                 
             ))   
         }
+
         </DragDropContext>
+        <div className='task-editor-div'>
+          
+             {
+              taskEditorActive&& <TaskEditor 
+              setTaskEditorActive={setTaskEditorActive}
+              setBoardData={setBoardData}
+              boardData={boardData} 
+              setIdTrack={setIdTrack}
+              idTrack={idTrack}
+              />
+             }
+             
+              
+            
+          </div>
     </div>
   );
 }

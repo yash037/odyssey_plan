@@ -7,14 +7,18 @@ const CapsuleButton = ( { text , handler ,children} ) => {
       borderRadius: '20px',
       padding: '10px 20px',
       cursor: 'pointer',
+      display : 'flex',
+      flexDirection : 'row',
+      justifyContent : 'center',
+      margin : '3px 0'
     };
     if(handler == null){
         handler = () => {}
     }
     return (
-      <button style={buttonStyle} onClick={handler}>
-        {text} 
+      <button style={ buttonStyle } onClick={handler}>
         {children}
+        {text} 
       </button>
     );
   };

@@ -6,6 +6,7 @@
 .drop-list{
     font-family: 'Nunito Sans', sans-serif;
     margin: 20px;
+    flex-grow: 1;
 }
 
 .list-color{
@@ -31,4 +32,28 @@
     border-radius: 10px;
     margin: 10px 0 ;
     box-shadow: 0 6px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+}
+.draggable-div p {
+    margin:  0 auto ;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+}
+.kanban-board-content{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.task-editor-div{
+   position: fixed;
+   bottom: 55vh;
+   right: 30vw;
+}
+
+.text-editor-title{
+    display: flex;
+    flex-direction: row;
 }

@@ -1,29 +1,37 @@
-import { send , backendURL , frontendURL} from '../../global/request'
-import { useNavigate } from 'react-router-dom';
-export default function DashBoard(){
-    const history = useNavigate()
-    const handleLogout = () => {
-        send.get(backendURL+'/auth/logout').then(
-            (res)=>{
-                if(res.status==200){
-                    console.log('logining out');
-                    window.location.href = frontendURL;
-                }
-                else{
-                    console.log('logout failed')
-                }
+import './components/css/Dashboard.css'
+import Sidebar from './components/sidebar/Sidebar';
+import Navbar from './components/navbar/Navbar';
+import WorkSpaceSidebar from './components/sidebar/WorkSpaceSideBar';
+import Content from './components/content/Content';
+import { useEffect, useState } from 'react';
 
-            }
-        )
+export default function DashBoard(){
+    const [ content , setContent ] = useState({type : 'doc' , databaseId : '1xef'}) //this id correspond's to default kanban data
+    const view = content.type
+    const databaseId = content.databaseId
+    useEffect(() => {
+        console.log(content.type)        
+        
     }
-    const handleDocument = () => {
-       history('/documents')
-    }
+    , [content]
+    )
     return (
-        <div>
-            If you are seeing this you are logged in 
-            <button onClick={handleLogout}>Logout</button>
-            <button onClick={handleDocument}>Go to Doucment</button>
+        <div className='dashboard'>
+            
+            <Navbar/>
+            <WorkSpaceSidebar 
+            data={ [ 's1' , 's2' ] }
+            />
+            <Sidebar 
+            setContent={setContent}
+            />  
+            <div className='content-div'>
+                <Content 
+                view = {view} 
+                databaseId = {databaseId}
+                />
+            </div>
         </div>
+        
     )
 }

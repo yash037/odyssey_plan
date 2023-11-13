@@ -1,0 +1,24 @@
+.dashboard{
+    display: grid;
+    grid-template-columns: repeat(40,2.5vw) ;
+    grid-template-rows: repeat(40,2.5vh);
+}
+
+.navbar{
+    background-color: aqua;
+    grid-area: 1 / 4 / 3 / 41;
+}
+
+.sidebar-div{
+    background-color: brown;
+    grid-area: 3 / 4 / 41 / 11;
+}
+.workspace-sidebar{
+    background-color: blue;
+    grid-area: 1 / 1 / 41 / 4;
+}
+
+.content-div{
+    position: relative;
+    grid-area: 3 / 11 / 41 / 41;
+}
