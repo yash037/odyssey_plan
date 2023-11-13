@@ -35,7 +35,7 @@ export default function RecursiveSidebar({
 }){
     const [ gData , setGData ] = useState(ownData);
     const [ currpos , setCurrpos ] = useState('0');
-    const [ keyTracker , setKeyTracker ] = useState(6);
+    const [ keyTracker , setKeyTracker ] = useState(100);
     
     const loop = (data, key, callback) => {
         for (let i = 0; i < data.length; i++) {
@@ -47,7 +47,7 @@ export default function RecursiveSidebar({
           }
         }
     };
-    const handleAddFile = ( type ) => {
+    const handleAddFile = ( type , id) => {
 
         const data = [ ...gData ]
         if(currpos == '0') {
@@ -56,7 +56,8 @@ export default function RecursiveSidebar({
                 key : keyTracker,
                 type : 'file',
                 icon : provideIcon,
-                filetype : type
+                filetype : type,
+                databaseId : id ,
             }])
             setKeyTracker( keyTracker + 1 )
         }
@@ -70,7 +71,8 @@ export default function RecursiveSidebar({
                     title : <RenamableName/>,
                     type : 'file',
                     icon : provideIcon,
-                    filetype : type
+                    filetype : type ,
+                    databaseId : id
                 } )
             } )
             setGData(data)
@@ -106,6 +108,10 @@ export default function RecursiveSidebar({
     }
   const onSelect = ( selectedKeys , {node}) => {
     setCurrpos(node.key)
+    if(node.type=='file'){
+      setContent({type : node.filetype, databaseId : node.databaseId})
+    }
+   
   }
   const onDrop = (info) => {
     console.log(info);
@@ -213,20 +219,24 @@ export default function RecursiveSidebar({
   }
   const handleAddDoc = () => {
     window.open(frontendURL + '/documents' , '_blank')
-    handleAddFile('doc')
-    setContent({type : 'doc', databaseId : uuid()}) //this id corresponds to the file data in mongodb
+    const id = uuid()
+    handleAddFile('doc' , id)
+    setContent({type : 'doc', databaseId : id}) //this id corresponds to the file data in mongodb
   }
   const handleAddCalendar = () => {
-    handleAddFile('calendar')
-    setContent({type : 'calendar', databaseId : uuid()})
+    const id = uuid()
+    handleAddFile('calendar' , id) 
+    setContent({type : 'calendar', databaseId :id})
   }
   const handleAddBoard = () => {
-    handleAddFile('board')
-    setContent({type : 'board', databaseId : uuid()})  
+    const id = uuid()
+    handleAddFile('board' , id)
+    setContent({type : 'board', databaseId : id})  
   }
   const handleAddNote = () => {
-    handleAddFile('note')
-    setContent({type : 'note', databaseId : uuid()})
+    const id = uuid()
+    handleAddFile('note' , id)
+    setContent({type : 'note', databaseId : id})
   }
   return (
     <div>

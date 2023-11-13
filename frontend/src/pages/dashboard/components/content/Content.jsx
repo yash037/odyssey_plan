@@ -1,62 +1,43 @@
+import { useEffect, useState } from "react"
 import KanbanStyleBoard from "../KanbanStyleBoard"
 import NoteEditor from "../NoteEditor"
+import { backendURL, send } from "../../../../global/request"
 
-const kanbanData = [
-    {
-        name : 'unassigned',
-        data : [
-            {
-                id : '1',
-                name : 'unassigned'
-            }
-        ],
-    },
-    {
-        name : 'assigned',
-        data : [
-            {
-                id : '2',
-                name : 'assigned'
-            }
-        ],
-    },
-    {
-        name : 'done',
-        data : [
-            {
-                id : '3',
-                name : 'done'
-            }
-        ],
-    },
-    {
-        name : 'archived',
-        data : [
-            {
-                id : '4',
-                name : 'archived'
-            }
-        ],
-    },
-    {
-        name : 'unarchived',
-        data : [
-            {
-                id : '5',
-                name : 'unarchived'
-            }
-        ]
-    }
-]
 export default function Content({ view , data , databaseId}){
+    const [contentData , setContentData] = useState(data)
+    // useEffect(
+    //     () => {
+    //         send.get(backendURL + '/getContent' , {
+    //             params : {
+    //                 databaseId : databaseId
+    //             }
+    //         }).then(
+    //             (res) => {
+    //                 if(res.status == 200){
+    //                     setContentData(res.data)
+    //                 }
+                    
+    //             }
+    //         )
+    //         return (
+    //             () => {
+    //                 send.post(backendURL + '/saveData' , {
+    //                     data : {
+                           
+    //                     }
+    //                 })
+    //             }
+    //         )
+    //     }
+    // , [databaseId])
     switch( view ){
         case 'kanban':
             return (
-                <KanbanStyleBoard data={kanbanData}></KanbanStyleBoard>
+                <KanbanStyleBoard data={contentData} ></KanbanStyleBoard>
             )
         case 'note':
             return(
-                <NoteEditor></NoteEditor>
+                <NoteEditor data={contentData} databaseId={databaseId}></NoteEditor>
             )
         case 'doc':
             return(
@@ -74,7 +55,7 @@ export default function Content({ view , data , databaseId}){
             )
         default :
             return (
-                <KanbanStyleBoard data={kanbanData}></KanbanStyleBoard>
+                <KanbanStyleBoard data={contentData}></KanbanStyleBoard>
             )
     }
 }
