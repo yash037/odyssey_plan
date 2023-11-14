@@ -7,7 +7,6 @@ import Auth from "./pages/auth/auth";
 
 import { send } from './global/request'
 import { useState , useEffect } from "react";
-
 import DocumentEditor from './pages/document/document'
 import Redirect from "./pages/document/component/redirect";
 
