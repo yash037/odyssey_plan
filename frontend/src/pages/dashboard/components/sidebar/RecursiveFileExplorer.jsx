@@ -218,13 +218,14 @@ export default function RecursiveSidebar({
     }
   }
   const handleAddDoc = () => {
-    window.open(frontendURL + '/documents' , '_blank')
     const id = uuid()
+    window.open(frontendURL + `/documents/${id}` , '_blank')
     handleAddFile('doc' , id)
     setContent({type : 'doc', databaseId : id}) //this id corresponds to the file data in mongodb
   }
   const handleAddCalendar = () => {
     const id = uuid()
+    window.open(frontendURL + `/calendar` , '_blank')
     handleAddFile('calendar' , id) 
     setContent({type : 'calendar', databaseId :id})
   }

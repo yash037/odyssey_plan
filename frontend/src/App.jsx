@@ -9,7 +9,7 @@ import { send } from './global/request'
 import { useState , useEffect } from "react";
 import DocumentEditor from './pages/document/document'
 import Redirect from "./pages/document/component/redirect";
-
+import Calendar from "./pages/calendar/Calendar";
 function App() {
   
   const [user,setUser]=useState(null);
@@ -66,6 +66,7 @@ function App() {
             <Route path="/" element={<DashBoard></DashBoard>}/>
             <Route path='/documents' exact element={<Redirect></Redirect>}/>  
             <Route path='/documents/:id' exact element={<DocumentEditor></DocumentEditor>} /> 
+            <Route path="/calendar" exact element={<Calendar></Calendar>}></Route>
           </Routes>
         </BrowserRouter>
       </>
