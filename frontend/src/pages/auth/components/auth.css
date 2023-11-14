@@ -114,27 +114,6 @@ button {
   margin-top: 0.3125rem;
 }
 
-.google:hover, .github:hover, .googleimg:hover {
-  background-color: #d4d4d4;
-  color: #000000;
-}
-
-.google, .github {
-  width: 18.65rem;
-}
-
-.github {
-  margin-bottom: 1.25rem;
-}
-
-.googleimg, .githubimg {
-  width: 1.25rem;
-  height: 1.25rem;
-  margin-right: 0.625rem;
-  border-radius: 1rem;
-  transform: translateY(0.1875rem);
-}
-
 .icon {
   width: 6.25rem;
   font-family: 'Noto Sans', sans-serif;
@@ -142,4 +121,36 @@ button {
 
 .heading {
   color: #fff;
+  font-size: 20px;
+}
+
+.github-btn, .google-btn{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+  border: 1px solid #ddd;
+  padding: 10px 15px;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+  width: 300px;
+  margin-bottom: 5px;
+}
+
+.github-btn:hover, .google-btn:hover{
+  background-color: rgb(219, 221, 226); 
+  color: #ffffff; 
+}
+
+.github-img, .google-img {
+  width: 24px;
+  height: 24px;
+  margin-right: 8px;
+  border-radius: 50px;
+}
+
+.github-text, .google-text {
+  color: #333;
+  font-weight: bold;
+  font-size: 16px;
 }
