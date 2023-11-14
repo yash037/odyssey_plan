@@ -23,7 +23,6 @@ function KanbanStyleBoard( { data , databaseId } ) {
   useEffect(()=>{
     return(
       ()=>{
-          console.log(boardData)
           send.post(backendURL + '/data/saveContent' , {
             data : {
                   databaseId : databaseId,
@@ -82,12 +81,17 @@ function KanbanStyleBoard( { data , databaseId } ) {
     setIdTrack((id)=>(id + 1)) //workaround for some bug
     //something is wrong with state
   }
-  
+  if(boardData.map == null){
+    return (
+      <>
+      </>
+    )
+  }
   return (
     <div className="KanbanStyleBoard">
         <DragDropContext onDragEnd={handleOnDragEnd}>
-         
-        {
+        { 
+           
             boardData.map((data , index) => (
                 <div key={index} className='drop-list'>
                     <div className='list-header'>
