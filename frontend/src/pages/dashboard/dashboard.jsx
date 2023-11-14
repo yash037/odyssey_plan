@@ -9,15 +9,7 @@ import { useEffect, useState } from 'react';
 export default function DashBoard(){
     const [ content , setContent ] = useState({ type : 'doc' , databaseId : '1xef' }) //this id correspond's to default kanban data
     const view = content.type
-    const databaseId = content.databaseId
-    useEffect(
-        () => {
-            console.log( content.databaseId )
-
-
-        },
-        [content]
-    )    
+    const databaseId = content.databaseId  
     return (
         <div className='dashboard'>
             
@@ -32,7 +24,6 @@ export default function DashBoard(){
                 <Content 
                 view = {view} 
                 databaseId = {databaseId}
-                data={[{id : '1' , data : [] , name : 'done'}]}
                 />
             </div>
         </div>

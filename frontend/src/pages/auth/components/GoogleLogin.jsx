@@ -7,9 +7,9 @@ export default function GoogleLogger(){
     }
     return (
         <div>
-            <button onClick={handleGoogleClick} className='google'>
-                <img src={GoogleIcon} alt="Google" className='googleimg' />
-                Google
+            <button onClick={handleGoogleClick} className='google-btn'>
+                <img src={GoogleIcon} alt="Google" className='google-img' />
+                <span className='google-text'>Google</span>
             </button>
         </div>
     )

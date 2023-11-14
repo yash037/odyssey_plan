@@ -7,7 +7,7 @@ const documentSchema = require('../../database/schema/documentSchema').documentS
 const Doc = mongoose.model('Documents' , documentSchema)
 
 dataRouter.post('/saveContent' ,async (req,res) => {
-    console.log(req.body.data)
+    
     try{
         var doc = await Doc.findOne({Id : req.body.data.databaseId })
         if( doc == null ){
@@ -26,10 +26,12 @@ dataRouter.post('/saveContent' ,async (req,res) => {
     catch ( e ){
         res.status(400)
     }
-   
+    res.end()
 })
 
 dataRouter.get('/getContent' , async (req,res)=>{
+    console.log('get')
+    console.log(req.query.databaseId)
     var doc = await Doc.findOne({Id : req.query.databaseId})
     if( doc == null ){
         res.status(201)   //201 flag here represent's use default data

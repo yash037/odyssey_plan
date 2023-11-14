@@ -5,45 +5,54 @@ import { backendURL, send } from "../../../../global/request"
 import kanbanData from "./utils/kanbanData"
 import noteData from "./utils/noteData"
 
-export default function Content({ view , data , databaseId }){
-    const [contentData , setContentData] = useState(data)
+export default function Content({ view , databaseId }){
+    const [contentData , setContentData] = useState(view=='board'?noteData:kanbanData)
+    const [ backendId , setBackendId ] = useState(databaseId)
+    const [ componentType , setComponentType ] = useState(view)
     useEffect(
-        () => {
-            
-        },
-        [contentData,databaseId]
+        () => { 
+            console.log(databaseId)
+            setBackendId(databaseId)
+            setComponentType(view)
+        },[
+            databaseId , view
+        ]
     )
     useEffect(
         () => {
-            send.get(backendURL + '/data/getContent' , {
-                params : {
-                    databaseId : databaseId
-                }
-            }).then(
-                (res) => {
-                    console.log(res)
-                    if(res.status == 200){
-                        setContentData(res.data)
+            console.log('in data get')
+            const getData = async ( databaseId ) => {
+                const res = await send.get(backendURL + '/data/getContent' , { 
+                    params : {
+                        databaseId :databaseId
                     }
-                    if(res.status == 201){
-                        switch(view){
-                            case 'board' : 
-                                setContentData(kanbanData)
-                                break;
-                            case 'note':
-                                setContentData(noteData)
-                                break;
-                            
-                        }
+                })
+                console.log(res)    
+                if(res.status == 200){
+                    setContentData(res.data.data)
+                }
+                if(res.status == 201){
+                
+                    switch(componentType){
+                        case 'board' : 
+                            setContentData(kanbanData)
+                            break;
+                        case 'note':
+                            setContentData(noteData)
+                            break;
+                        
                     }
                 }
-            )   
+                
+            }
+            getData(backendId)
+           
+            console.log('out data get') 
         }
-    , [databaseId,view])
+    , [backendId , componentType])
     
-    switch( view ){
+    switch( componentType ){
         case 'board':
-            console.log(contentData)
             return (
                 <KanbanStyleBoard 
                 data={contentData} 
@@ -73,10 +82,9 @@ export default function Content({ view , data , databaseId }){
             )
         default :
             return (
-                <KanbanStyleBoard 
-                data={contentData} 
-                databaseId={databaseId}
-                />
+                <div>
+                    we donn know
+                </div>
             )
     }
 }

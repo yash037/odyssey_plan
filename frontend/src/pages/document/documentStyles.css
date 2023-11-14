@@ -7,7 +7,7 @@ body {
     margin: 0;
 }
   
-/* white page where text is written */
+
 .container .ql-editor{ 
     width : 10in; 
     min-height : 12in;
@@ -17,13 +17,13 @@ body {
     background-color: white;
 }
 
-/* the entire container of the document (for centering purposes */
+
 .container .ql-container.ql-snow{
     display: flex;
     border: none;
     justify-content: center;
 }
-/* top tool bar (so that it sticks) */
+
 .container .ql-toolbar.ql-snow{
    
     border: none;
@@ -36,7 +36,7 @@ body {
     box-shadow: 0 0 5px rgba(0, 0 ,0 ,0.5);
 }
 
-/* media queries for printing the page */
+
 @page {
     margin: 1in;
 }
