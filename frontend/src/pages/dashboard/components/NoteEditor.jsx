@@ -4,9 +4,10 @@ import { v4 as uuid } from "uuid";
 import { backendURL, send } from '../../../global/request'
 import "@blocknote/core/style.css";
 import { useEffect, useState } from "react";
+import noteData from "./content/utils/noteData";
 
 export default function NoteEditor({data , databaseId}) {
-    const  [ markdown , setMarkdown ] = useState( data )
+    const  [ markdown , setMarkdown ] = useState( Array.isArray(data)==true ? noteData : data )
     const saveBlocksAsMarkdown = async (editor) => {
       const newMarkdown = await editor.blocksToMarkdown(editor.topLevelBlocks);
       setMarkdown(newMarkdown);
@@ -50,11 +51,7 @@ export default function NoteEditor({data , databaseId}) {
       },
       [ data ]
     )
-    useEffect(
-      () => {
-        
-      },[markdown]
-    )
+   
     useEffect(()=>{
       return(
         ()=>{
@@ -69,20 +66,14 @@ export default function NoteEditor({data , databaseId}) {
             }
           )
       },[markdown,databaseId])
-    
-    
-  
-  
-    
 
   return (
     <>
-    <BlockNoteView 
-    editor={editor} 
-    theme={'dark'}
-    />
-    
-  </>
+      <BlockNoteView 
+      editor={editor} 
+      theme={'dark'}
+      />
+    </>
   )
           
 }

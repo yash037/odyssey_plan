@@ -133,7 +133,7 @@ export default function Sidebar() {
           </ListItemButton>
         </ListItem>
 
-        {/* Home or DashBoard */}
+        
 
         <ListItem
           disablePadding
