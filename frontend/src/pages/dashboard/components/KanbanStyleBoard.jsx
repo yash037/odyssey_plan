@@ -7,11 +7,11 @@ import CapsuleButton from './CapsuleButton';
 import TaskEditor from './TaskEditor';
 import { backendURL, send } from '../../../global/request';
 import AddBoard from './AddBoard';
-
+import kanbanData from './content/utils/kanbanData';
 const colors = [ 'red' , 'yellow' , 'blue' , 'green' , 'purple' , 'pink'];
 
 function KanbanStyleBoard( { data , databaseId } ) {
-  const [boardData, setBoardData] = useState(data);
+  const [boardData, setBoardData] = useState(Array.isArray(data)==true ? data  : kanbanData );
   const [ taskEditorActive , setTaskEditorActive ] = useState(true);
   const [ idTrack , setIdTrack ] = useState(100);
  
@@ -26,8 +26,8 @@ function KanbanStyleBoard( { data , databaseId } ) {
           send.post(backendURL + '/data/saveContent' , {
             data : {
                   databaseId : databaseId,
-                  content :  boardData,
-                  filetype :  'note',
+                  content :  boardData ,
+                  filetype :  'board',
               }
             })
           }
@@ -75,7 +75,7 @@ function KanbanStyleBoard( { data , databaseId } ) {
     setBoardData([...boardData])
     
   }
- 
+  
   const handleDeleteTask = ( boardIndex , elementIndex  ) => {
     boardData[boardIndex].data.splice(elementIndex,1)
     setIdTrack((id)=>(id + 1)) //workaround for some bug
@@ -84,6 +84,7 @@ function KanbanStyleBoard( { data , databaseId } ) {
   if(boardData.map == null){
     return (
       <>
+        NULL
       </>
     )
   }

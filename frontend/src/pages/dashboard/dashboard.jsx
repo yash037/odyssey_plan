@@ -24,6 +24,7 @@ export default function DashBoard(){
                 <Content 
                 view = {view} 
                 databaseId = {databaseId}
+                key={databaseId}
                 />
             </div>
         </div>

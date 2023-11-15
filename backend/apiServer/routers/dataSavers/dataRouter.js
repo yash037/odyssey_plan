@@ -2,7 +2,7 @@ const express = require('express')
 const dataRouter = express.Router()
 
 const mongoose = require('mongoose');
-const { createTestAccount } = require('nodemailer');
+
 const documentSchema = require('../../database/schema/documentSchema').documentSchema
 const Doc = mongoose.model('Documents' , documentSchema)
 
@@ -30,14 +30,16 @@ dataRouter.post('/saveContent' ,async (req,res) => {
 })
 
 dataRouter.get('/getContent' , async (req,res)=>{
-    console.log('get')
-    console.log(req.query.databaseId)
+   
+
     var doc = await Doc.findOne({Id : req.query.databaseId})
+   
+    console.log(req.user)
     if( doc == null ){
         res.status(201)   //201 flag here represent's use default data
     }
     else{
-        res.status(200).send({ data : doc.data })
+        res.status(200).send({ data : doc.data , type : doc.type })
     }
     res.end()
 })

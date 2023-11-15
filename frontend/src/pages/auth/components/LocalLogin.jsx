@@ -59,7 +59,7 @@ export function LocalRegister({handleClick}){
     return (
         //Register Page start
 
-        <div>
+        <div className='auth-div'>
             <div className='login-inner'>
 
             <img src={Icon} alt="Icon" className='icon' />
@@ -125,7 +125,7 @@ export function LocalLoging({handleClick}){
         setPassword(e.target.value);
     }
     return (
-        <div>
+        <div className='auth-div'>
             
             <div className='inner-login-page'>
             <img src={Icon} alt="Icon" className='icon' />

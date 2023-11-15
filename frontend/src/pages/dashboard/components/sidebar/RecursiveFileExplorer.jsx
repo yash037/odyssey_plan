@@ -1,7 +1,10 @@
 import { useState } from "react";
+
 import { Tree } from 'antd';
+
 import "rc-tree/assets/index.css"
 import '../css/Sidebar.css'
+
 import { IconButton } from "@mui/material";
 import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder';
 import PostAddIcon from '@mui/icons-material/PostAdd';
@@ -36,6 +39,7 @@ export default function RecursiveSidebar({
     const [ gData , setGData ] = useState(ownData);
     const [ currpos , setCurrpos ] = useState('0');
     const [ keyTracker , setKeyTracker ] = useState(100);
+    const [ disabled , setDisabled ] = useState(true)
     
     const loop = (data, key, callback) => {
         for (let i = 0; i < data.length; i++) {
@@ -110,6 +114,10 @@ export default function RecursiveSidebar({
     setCurrpos(node.key)
     if(node.type=='file'){
       setContent({type : node.filetype, databaseId : node.databaseId})
+      setDisabled(true)
+    }
+    else{
+      setDisabled(false)
     }
    
   }
@@ -243,19 +251,19 @@ export default function RecursiveSidebar({
     <div>
         <div className="file-explorer-buttons">
            
-            <IconButton onClick={ handleAddFolder } sx={{color : 'white'}}>
+            <IconButton onClick={ handleAddFolder } sx={{color : 'white'}} disabled={disabled}>
                 <CreateNewFolderIcon/>
             </IconButton>
-            <IconButton onClick={ handleAddDoc } sx={{color : 'white'}}>
+            <IconButton onClick={ handleAddDoc } sx={{color : 'white'}} disabled={disabled}>
                 <PostAddIcon/>
             </IconButton>
-            <IconButton onClick={ handleAddCalendar} sx={{color : 'white'}}>
+            <IconButton onClick={ handleAddCalendar} sx={{color : 'white'}} disabled={disabled}>
                 <EditCalendarIcon/>
             </IconButton>
-            <IconButton onClick={ handleAddBoard } sx={{color : 'white'}}>
+            <IconButton onClick={ handleAddBoard } sx={{color : 'white'}} disabled={disabled}>
                 <ViewKanbanIcon/>
             </IconButton>
-            <IconButton onClick={ handleAddNote } sx={{color : 'white'}}>
+            <IconButton onClick={ handleAddNote } sx={{color : 'white'}} disabled={disabled}>
                 <StickyNote2Icon/>
             </IconButton>
         </div>

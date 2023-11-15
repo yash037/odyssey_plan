@@ -6,16 +6,22 @@ import kanbanData from "./utils/kanbanData"
 import noteData from "./utils/noteData"
 
 export default function Content({ view , databaseId }){
-    const [contentData , setContentData] = useState(view=='board'?noteData:kanbanData)
-    const [ backendId , setBackendId ] = useState(databaseId)
-    const [ componentType , setComponentType ] = useState(view)
+    const [contentData , setContentData] = useState( view == 'board' ? kanbanData : noteData ) 
+    const [ backendId , setBackendId ] = useState( databaseId )
+    const [ componentType , setComponentType ] = useState( view )
     useEffect(
         () => { 
-            console.log(databaseId)
-            setBackendId(databaseId)
-            setComponentType(view)
+            setBackendId( databaseId )
         },[
-            databaseId , view
+            databaseId 
+        ]
+    )
+    useEffect(
+        () => {
+            setComponentType(view)
+        },
+        [
+            view
         ]
     )
     useEffect(
@@ -30,6 +36,7 @@ export default function Content({ view , databaseId }){
                 console.log(res)    
                 if(res.status == 200){
                     setContentData(res.data.data)
+                    setComponentType(res.data.type)
                 }
                 if(res.status == 201){
                 
@@ -57,6 +64,7 @@ export default function Content({ view , databaseId }){
                 <KanbanStyleBoard 
                 data={contentData} 
                 databaseId={databaseId}
+                key={databaseId}
                 />
             )
         case 'note':
@@ -64,6 +72,7 @@ export default function Content({ view , databaseId }){
                 <NoteEditor 
                 data={contentData} 
                 databaseId={databaseId}
+                key={databaseId}
                 />
             )
         case 'doc':
