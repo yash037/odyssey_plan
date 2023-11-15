@@ -63,14 +63,11 @@
 }
 
 .ant-tree-node-content-wrapper {
-  
   display: flex;
   flex-direction: row;
   align-items: center;
   width: 1vh;
+  gap: 4px;
 }
 
-.node-title-holder input{
-  margin-bottom: 0;
-}
 
