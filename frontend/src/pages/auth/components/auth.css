@@ -44,20 +44,20 @@ html {
   box-shadow: 0px 0.3125rem 0.9375rem #a4a4a4;
 }
 
-h1 {
+.auth-div h1 {
   color: #4285F4;
 }
 
-label {
+.auth-div label {
   color: #000000;
   margin-bottom: 0.5rem;
   text-align: left;
   display: block;
 }
 
-input[type="text"],
-input[type="password"],
-input[type="email"] {
+.auth-div input[type="text"],
+.auth-div input[type="password"],
+.auth-div input[type="email"] {
   padding: 0.75rem;
   margin-bottom: 0.9375rem;
   border: 0.0625rem solid #ccc;
@@ -65,7 +65,7 @@ input[type="email"] {
   width: 100%;
 }
 
-input[type="submit"] {
+.auth-div input[type="submit"] {
   background-color: #4285F4;
   color: #fff;
   border: none;
@@ -76,7 +76,7 @@ input[type="submit"] {
   margin-top: 0.625rem;
 }
 
-input[type="submit"]:hover {
+ input[type="submit"]:hover {
   background-color: #3579D8;
 }
 
@@ -103,16 +103,6 @@ input[type="submit"]:hover {
   font-family: 'Noto Sans', sans-serif;
 }
 
-button {
-  background-color: #ffffff;
-  color: #333;
-  border: 0.0625rem solid #333;
-  padding: 0.625rem 1.25rem;
-  border-radius: 0.3125rem;
-  cursor: pointer;
-  transition: background-color 0.3s, color 0.3s;
-  margin-top: 0.3125rem;
-}
 
 .icon {
   width: 6.25rem;

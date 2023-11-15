@@ -61,3 +61,16 @@
   display: flex;
   flex-direction: row-reverse;
 }
+
+.ant-tree-node-content-wrapper {
+  
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 1vh;
+}
+
+.node-title-holder input{
+  margin-bottom: 0;
+}
+
