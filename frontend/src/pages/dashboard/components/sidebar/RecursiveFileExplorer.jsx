@@ -358,6 +358,7 @@ export default function RecursiveSidebar({
                   ]
                 )
               )
+              item.se
             }
             if (item.children) {
               recur(item.children , name);
@@ -404,6 +405,7 @@ export default function RecursiveSidebar({
         showIcon={true}
         treeData={files}
         autoExpandParent={true}
+        
         >
           {renderTreeNodes(files)}
         </Tree>

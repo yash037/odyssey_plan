@@ -1,5 +1,4 @@
 import './components/css/Dashboard.css'
-import Sidebar from './components/sidebar/Sidebar';
 import Navbar from './components/navbar/Navbar';
 import WorkSpaceSidebar from './components/sidebar/WorkSpaceSideBar';
 import Content from './components/content/Content';
@@ -7,6 +6,8 @@ import { useEffect, useState } from 'react';
 import { backendURL, send } from '../../global/request';
 import RecursiveSidebar from './components/sidebar/RecursiveFileExplorer';
 import  { stringify , parse } from 'flatted'
+import CapsuleButton from './components/CapsuleButton';
+
 // the plan is everytime a component is actually mounted 
 // 
 export default function DashBoard(){
@@ -80,6 +81,19 @@ export default function DashBoard(){
             data={ [ 's1' , 's2' ] }
             />
             <div className="sidebar-div">
+                <CapsuleButton>
+                    Search
+                </CapsuleButton>
+                <CapsuleButton>
+                    Updates
+                </CapsuleButton>
+                <CapsuleButton>
+                    Settings
+                </CapsuleButton>
+                <CapsuleButton>
+                    NewPage
+                </CapsuleButton>
+                
                 <RecursiveSidebar 
                 setFiles={setPersonalSpace}
                 files={personalSpace}
@@ -87,6 +101,7 @@ export default function DashBoard(){
                 setContent={setContent}
                 name={'personal space'}
                 ></RecursiveSidebar>
+   
             </div>  
             <div className='content-div'>
                 <Content 
