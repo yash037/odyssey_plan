@@ -23,11 +23,7 @@ export default function AddBoard ({ setBoardData , boardData }) {
        
         handleModalClose()
     }
-    useEffect(
-        () => {
-            console.log(boardData)
-        },[boardData]
-    )
+   
        return(
         <div className="add-board">
             <IconButton onClick={handleAddClick} sx={{color : 'gold' }}>
