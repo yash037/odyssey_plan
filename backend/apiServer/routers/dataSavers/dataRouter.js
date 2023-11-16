@@ -2,13 +2,15 @@ const express = require('express')
 const dataRouter = express.Router()
 
 const mongoose = require('mongoose');
-const { workspaceSchema } = require('../../database/schema/workspaceSchema');
+const bodyParser = require('body-parser')
 
 const documentSchema = require('../../database/schema/documentSchema').documentSchema
+const workspaceSchema = require('../../database/schema/workspaceSchema').workspaceSchema 
+const Workspace = mongoose.model('Workspace' , workspaceSchema)
 const Doc = mongoose.model('Documents' , documentSchema)
 
-const FolderSchema = require('../../database/schema/workspaceSchema').workspaceSchema 
-const Folder = mongoose.model( 'Workspace' , workspaceSchema )
+dataRouter.use( bodyParser.json({limit : '50mb'}) )
+dataRouter.use( bodyParser.urlencoded({extended : true}) )
 
 dataRouter.post('/saveContent' ,async (req,res) => {
     
@@ -36,8 +38,6 @@ dataRouter.post('/saveContent' ,async (req,res) => {
 dataRouter.get('/getContent' , async (req,res)=>{
 
     var doc = await Doc.findOne({Id : req.query.databaseId})
-   
-    console.log(req.user)
     if( doc == null ){
         res.status(201)   //201 flag here represent's use default data
     }
@@ -48,7 +48,12 @@ dataRouter.get('/getContent' , async (req,res)=>{
 })
 
 dataRouter.get('/getFolder' , async (req , res) => {
-    const data = await Folder.findOne( {Id : req.query.workspaceId} )
+    let Id = req.query.workspaceId;
+    if( Id == 'personal' ){
+        Id = req.user.id
+    }
+   
+    const data = await Workspace.findOne( {Id : Id} )
     if( data == null){
         res.status(201)
     }
@@ -57,17 +62,28 @@ dataRouter.get('/getFolder' , async (req , res) => {
     }
     res.end()
 })
-
+var count = 0;
 dataRouter.post('/saveFolder' , async ( req , res ) => {
-    var doc = await Folder.findOne({Id : req.query.databaseId})
 
-    if( doc == null ){
-        res.status(201)   //201 flag here represent's use default data
-    }
-    else{
-        res.status(200).send({ data : doc.data , type : doc.type })
-    }
-    res.end()
+        console.log('detected')
+        let Id = req.body.data.workspaceId
+        if ( Id == 'personal' ){
+            Id = req.user.id
+        }
+        var fol = await Workspace.findOne({Id : Id })
+        if( fol == null ){
+            await Workspace.create( { 
+                Id :Id ,
+                folderStructure : req.body.data.content ,
+            } )
+        }
+        else{
+            fol.folderStructure = req.body.data.content
+            await fol.save()
+        }
+        res.status(200)
+    
+        res.end()
 })
 
 module.exports = dataRouter

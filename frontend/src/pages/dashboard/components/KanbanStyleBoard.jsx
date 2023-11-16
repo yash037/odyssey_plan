@@ -11,7 +11,7 @@ import kanbanData from './content/utils/kanbanData';
 const colors = [ 'red' , 'yellow' , 'blue' , 'green' , 'purple' , 'pink'];
 
 function KanbanStyleBoard( { data , databaseId } ) {
-  const [boardData, setBoardData] = useState(Array.isArray(data)==true ? data  : kanbanData );
+  const [boardData, setBoardData] = useState(Array.isArray(data)==true ?  kanbanData : data );
   const [ taskEditorActive , setTaskEditorActive ] = useState(true);
   const [ idTrack , setIdTrack ] = useState(100);
  

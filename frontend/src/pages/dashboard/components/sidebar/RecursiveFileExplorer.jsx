@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Tree } from 'antd';
 
@@ -9,33 +9,30 @@ import { IconButton } from "@mui/material";
 import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder';
 import PostAddIcon from '@mui/icons-material/PostAdd';
 import RenamableName from "./Renamable";
-import FolderIcon from '@mui/icons-material/Folder';
-import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
+
 import ViewKanbanIcon from '@mui/icons-material/ViewKanban';
 import EditCalendarIcon from '@mui/icons-material/EditCalendar';
-import DashboardIcon from '@mui/icons-material/Dashboard';
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+
 import StickyNote2Icon from '@mui/icons-material/StickyNote2';
 import { frontendURL } from "../../../../global/request";
 import { v4 as uuid} from "uuid";
 import CapsuleButton from "../CapsuleButton";
 import Icon from "./IconProvider";
 import Search from "antd/es/input/Search";
-const ownData = [
-    
-]
+
 const { TreeNode } = Tree;
 export default function RecursiveSidebar({ 
-      files , 
+      setFiles ,
       setContent , 
-      name
+      name,
+      files
 }){
-    const [ gData , setGData ] = useState(ownData);
     const [ currpos , setCurrpos ] = useState('0');
     const [ keyTracker , setKeyTracker ] = useState(100);
     const [ disabled , setDisabled ] = useState(true)
     const [ text , setText ] = useState('')
     const [ expandedKeys , setExpandedKeys ] = useState([])
+    
     const loop = (data, key, callback) => {
         for (let i = 0; i < data.length; i++) {
           if (data[i].key === key) {
@@ -48,16 +45,26 @@ export default function RecursiveSidebar({
     };
     const handleAddFile = ( type , id) => {
 
-        const data = [ ...gData ]
+        const data = [ ...files ]
         if(currpos == '0') {
-            setGData( [...data , {
-              key : `${keyTracker}`,
+            setFiles( [...data , {
+              key : uuid(),
               name : 'Untitled',
               type : 'file',
               filetype : type,
               databaseId : id
               
           }])
+            setFiles(
+              [...data , {
+                key : uuid(),
+                name : 'Untitled',
+                type : 'file',
+                filetype : type,
+                databaseId : id
+                
+            }]
+            )
             setKeyTracker( keyTracker + 1 )
         }
         else {
@@ -66,7 +73,7 @@ export default function RecursiveSidebar({
                 return
               }
                 appendLocation.children.splice( i , 0 , {
-                  key : `${keyTracker}`,
+                  key : uuid(),
                   name : 'Untitled',
                   type : 'file',
                   filetype : type,
@@ -74,16 +81,17 @@ export default function RecursiveSidebar({
                   
               } )
             } )
-            setGData(data)
+            setFiles(data)
+            setFiles(data)
             setKeyTracker(keyTracker + 1)
         }
   }
     const handleAddFolder = ( ) => {
 
-        const data = [ ...gData ]
+        const data = [ ...files ]
         if(currpos == '0') {
-            setGData( [...data , {
-              key : `${keyTracker}`,
+            setFiles( [...data , {
+              key : uuid(),
               name : 'Untitled',
               type : 'folder',
               children : [
@@ -92,12 +100,20 @@ export default function RecursiveSidebar({
 
               
           }])
+          setFiles( [...data , {
+            key : uuid(),
+            name : 'Untitled',
+            type : 'folder',
+            children : [
+                
+            ],
+        }])
             setKeyTracker( keyTracker + 1 )
         }
         else {
             loop( data , currpos , ( appendLocation , i , data ) => {
                 appendLocation.children.splice( i , 0 , {
-                  key : `${keyTracker}`,
+                  key : uuid(),
                   name : 'Untitled',
                   type : 'folder',
                   children : [
@@ -106,7 +122,8 @@ export default function RecursiveSidebar({
                   
               } )
             } )
-            setGData(data)
+            setFiles(data)
+            setFiles(data)
             setKeyTracker(keyTracker + 1)
         }
     }
@@ -129,20 +146,18 @@ export default function RecursiveSidebar({
     const dropPos = info.node.pos.split('-');
     const dropPosition = info.dropPosition - Number(dropPos[dropPos.length - 1]);
     
-    const data = [...gData];
+    const data = [...files];
 
    
     let dragObj;
     let removefrom;
     let removeindex;
     loop(data, dragKey, (item, index, arr) => {
-      
       removefrom = arr;
       removeindex = index;
       dragObj = item;
     });
     if (!info.dropToGap) {
-      
       loop(data, dropKey, (item) => {
         if(item.type != 'folder'){
            
@@ -183,7 +198,7 @@ export default function RecursiveSidebar({
       }
       removefrom.splice(removeindex, 1);
     }
-    setGData(data);
+    setFiles(data);
   };
   const onExpand = (newKeys , { expanded , node } ) => {
     setExpandedKeys(newKeys)
@@ -195,7 +210,7 @@ export default function RecursiveSidebar({
    
     if(data.type == 'folder'){
         return (
-           <FolderIcon></FolderIcon> 
+          '📁'
         )
     }
     else{ 
@@ -203,24 +218,24 @@ export default function RecursiveSidebar({
         switch(data.filetype){
             case 'calendar':
                 return(
-                    <CalendarTodayIcon/>
+                    '📅'
                 )
             
             case 'doc':
                 return (
-                    <InsertDriveFileIcon/>
+                  '📘'
                 )
             case 'note':
                 return(
-                  <StickyNote2Icon/>
+                  '📝'
                 )
             case 'board':
                   return (
-                      <DashboardIcon/>
+                      '🖽'
                   ) 
             default : 
                 return(
-                    <FolderIcon/> 
+                  '📁'
                 )
         }
         
@@ -249,11 +264,11 @@ export default function RecursiveSidebar({
     setContent({type : 'note', databaseId : id})
   }
   const handleRootAddClick = () => {
-    setGData(
+    setFiles(
       [
-        ...gData ,
+        ...files ,
         {
-          key : `${keyTracker}`,
+          key : uuid(),
           type : 'folder',
           name : 'Untitled',
           children : [
@@ -264,6 +279,21 @@ export default function RecursiveSidebar({
       }
       ]
      
+    )
+    setFiles(
+      [
+        ...files ,
+        {
+          key : uuid(),
+          type : 'folder',
+          name : 'Untitled',
+          children : [
+              
+          ],
+         
+          
+      }
+      ]
     )
     setKeyTracker(keyTracker + 1)
   }
@@ -283,14 +313,15 @@ export default function RecursiveSidebar({
           className="node"
           >
               <Icon 
+                key={item.key}
                 id={item.key} 
                 emoji={item.emoji}
-                setGData={setGData}
+                setFiles={setFiles}
               />
               <RenamableName
               key={item.key}
               name={item.name}
-              setGData={setGData}
+              setFiles={setFiles}
               id={item.key}
             />
           </div>
@@ -334,7 +365,7 @@ export default function RecursiveSidebar({
         }
       )
   }
-  recur( gData , e.target.value )
+  recur( files , e.target.value )
   }
   return (
     <div>
@@ -371,10 +402,10 @@ export default function RecursiveSidebar({
         onExpand={onExpand}
         expandedKeys={expandedKeys}
         showIcon={true}
-        treeData={gData}
+        treeData={files}
         autoExpandParent={true}
         >
-          {renderTreeNodes(gData)}
+          {renderTreeNodes(files)}
         </Tree>
         <CapsuleButton handler={handleRootAddClick}>
           Create Add

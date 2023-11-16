@@ -4,12 +4,74 @@ import Navbar from './components/navbar/Navbar';
 import WorkSpaceSidebar from './components/sidebar/WorkSpaceSideBar';
 import Content from './components/content/Content';
 import { useEffect, useState } from 'react';
+import { backendURL, send } from '../../global/request';
+import RecursiveSidebar from './components/sidebar/RecursiveFileExplorer';
+import  { stringify , parse } from 'flatted'
 // the plan is everytime a component is actually mounted 
 // 
 export default function DashBoard(){
+    console.log('1')
     const [ content , setContent ] = useState({ type : 'doc' , databaseId : '1xef' }) //this id correspond's to default kanban data
+    const [ personalSpace , setPersonalSpace ] = useState([]) //personal space is at index 0
     const view = content.type
     const databaseId = content.databaseId  
+    useEffect(
+        () => {
+            const getData = async () => {
+                const res = await   send.get(backendURL + '/data/getFolder' , {
+                    params : {
+                        workspaceId : 'personal'
+                    }
+                })
+                if(res.status == 200){
+                    setPersonalSpace(parse(res.data.data.folderStructure))
+                }
+                if(res.status == 201){
+                    setPersonalSpace([])
+                }  
+            }
+            getData()
+        }
+        
+        ,
+        []
+    )
+    useEffect(
+        () => {
+            console.log('saving')
+            const sendData = async ( personalSpace ) => {
+             
+                try{
+                    const recur = ( data ) => {
+                        if(data == null){
+                            return
+                        }
+                        data.forEach(
+                            ( item ) => {
+                                item.title = ""
+                                recur(data.children)
+                            }
+                        )
+                    }
+                    recur(personalSpace)
+                    const payload = stringify(personalSpace)
+                    const res =  await send.post(backendURL + '/data/saveFolder' , {
+                        data : {
+                            workspaceId : 'personal',
+                            content : payload
+                        }    
+                    })
+                }
+                catch(e){
+                    console.log(e)
+                }   
+            }
+            
+            sendData(personalSpace)
+            console.log('end')
+        }
+        ,[personalSpace]
+    )
     return (
         <div className='dashboard'>
             
@@ -17,9 +79,15 @@ export default function DashBoard(){
             <WorkSpaceSidebar 
             data={ [ 's1' , 's2' ] }
             />
-            <Sidebar 
-            setContent={setContent}
-            />  
+            <div className="sidebar-div">
+                <RecursiveSidebar 
+                setFiles={setPersonalSpace}
+                files={personalSpace}
+                index={0} 
+                setContent={setContent}
+                name={'personal space'}
+                ></RecursiveSidebar>
+            </div>  
             <div className='content-div'>
                 <Content 
                 view = {view} 
