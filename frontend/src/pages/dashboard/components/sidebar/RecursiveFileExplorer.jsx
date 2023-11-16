@@ -20,6 +20,7 @@ import { frontendURL } from "../../../../global/request";
 import { v4 as uuid} from "uuid";
 import CapsuleButton from "../CapsuleButton";
 import Icon from "./IconProvider";
+import Search from "antd/es/input/Search";
 const ownData = [
     
 ]
@@ -33,7 +34,8 @@ export default function RecursiveSidebar({
     const [ currpos , setCurrpos ] = useState('0');
     const [ keyTracker , setKeyTracker ] = useState(100);
     const [ disabled , setDisabled ] = useState(true)
-   
+    const [ text , setText ] = useState('')
+    const [ expandedKeys , setExpandedKeys ] = useState([])
     const loop = (data, key, callback) => {
         for (let i = 0; i < data.length; i++) {
           if (data[i].key === key) {
@@ -109,11 +111,9 @@ export default function RecursiveSidebar({
         }
     }
   const onSelect = (node) => {
-    console.log(node)
-    console.log(node.filetype , node.type)
+    
     setCurrpos(node.key)
     if(node.type=='file'){
-      
       setContent({type : node.filetype, databaseId : node.databaseId})
       setDisabled(true)
     }
@@ -185,7 +185,8 @@ export default function RecursiveSidebar({
     }
     setGData(data);
   };
-  const onExpand = (_placeholder , { expanded , node } ) => {
+  const onExpand = (newKeys , { expanded , node } ) => {
+    setExpandedKeys(newKeys)
     if( expanded == true ){
         setCurrpos( node.key )
     }
@@ -274,12 +275,13 @@ export default function RecursiveSidebar({
         item.emoji = (
           provideIcon({ type :item.type , filetype :item.filetype})
         )
-      }  
-        console.log(item)
+      }
         item.title = (
           <div onClick={()=>{
             onSelect(item)
-          }}>
+          }}
+          className="node"
+          >
               <Icon 
                 id={item.key} 
                 emoji={item.emoji}
@@ -308,8 +310,41 @@ export default function RecursiveSidebar({
 
     return nodeArr;
   };
+  const handleSearchChange = (e) => {
+    setText(e.target.value)
+    setExpandedKeys([])
+    const recur = ( data , name ) => {
+        data.forEach((item) => {
+            if (item.name.includes(name) == true ) {
+              if( name == '' ){
+                return
+              }
+              console.log('found')
+              setExpandedKeys(
+                (expandedKeys) => (
+                  [
+                    ...expandedKeys , item.key
+                  ]
+                )
+              )
+            }
+            if (item.children) {
+              recur(item.children , name);
+            }
+        }
+      )
+  }
+  recur( gData , e.target.value )
+  }
   return (
     <div>
+      <Search 
+        value={text} 
+        onChange={handleSearchChange}
+        onBlur={()=>{
+          setExpandedKeys([])
+        }}
+      />
         <div className="file-explorer-buttons">
            
             <IconButton onClick={ handleAddFolder } sx={{color : 'white'}} disabled={disabled}>
@@ -334,8 +369,10 @@ export default function RecursiveSidebar({
         blockNode
         onDrop={onDrop}
         onExpand={onExpand}
+        expandedKeys={expandedKeys}
         showIcon={true}
         treeData={gData}
+        autoExpandParent={true}
         >
           {renderTreeNodes(gData)}
         </Tree>
