@@ -17,8 +17,7 @@ const Calendar = () => {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [events, setEvents] = useState([]);
   const { id } = useParams();
-  // console.log(id)
-  console.log(events)
+  console.log('rendered')
   useEffect(
     () => {
       //fetch data here
@@ -54,18 +53,18 @@ const Calendar = () => {
   )
   useEffect(
     () => {
-      const sendData = async ( databaseId ) => {
+      const sendData = ( databaseId ) => {
+        console.log('saving')
         try{
-          const res = await send.post(backendURL + '/data/saveContent' , {
+          send.post(backendURL + '/data/saveContent' ,
+          {
             data : {
-              databaseId : databaseId ,
-              content : events ,
-              filetype : 'calendar'
+              databaseId : databaseId,
+              content : events,
+              filetype : 'calendar',
             }
           })
-          console.log(res)
-          
-        } 
+        }
         catch(e){
           console.log(e)
         }
@@ -74,22 +73,20 @@ const Calendar = () => {
     },
     [events,id]
   )
-  const handleSubmit = ( ) => {
-    
-  }
-
+ 
   const onEventAdded = (event) => {
-    const calendarApi = calendarRef.current.getApi();
-    calendarApi.addEvent(event);
-    setEvents(calendarApi.getEvents())
+    console.log(event)
+    setEvents([...events , { 
+       key : uuid(),      
+      ...event
+    }])
     setModalOpen(false);
   };
 
-  const handleEventDeleted = () => {
+  const handleEventDeleted = (key) => {
     if (selectedEvent) {
-      const calendarApi = calendarRef.current.getApi();
-      calendarApi.getEventById(selectedEvent.id).remove();
-
+      const updatedEvents = events.filter((event) => (event.key != key))
+      setEvents([...updatedEvents])
       setModalOpen(false);
     }
   };
@@ -122,20 +119,52 @@ const Calendar = () => {
     calendarApi.changeView(viewName);
   };
 
-  const handleDateClick = () => {
+  const handleDateClick = (arg) => {
     setModalOpen(true);
   };
 
-  const handleEventClick = (arg) => {
-    setSelectedEvent(arg.event);
+  const handleEventClick = (event) => {
+    const updatedEvent = {
+      key : event.event.extendedProps.key,
+      start : event.event.start,
+      end : event.event.end,
+      title : event.event.title,
+      color : event.event.backgroundColor,
+      reminderTime : event.event.extendedProps.reminderTime, 
+    }
+    setSelectedEvent(updatedEvent);
     setModalOpen(true);
   };
 
-  const handleEventChange = () => {
+  const handleEventChange = (event) => {
     const calendarApi = calendarRef.current.getApi();
-    setEvents(calendarApi.getEvents())
+    const updatedEvent = {
+      key : event.event.extendedProps.key,
+      start : event.event.start,
+      end : event.event.end,
+      title : event.event.title,
+      color : event.event.backgroundColor,
+      reminderTime : event.event.extendedProps.reminderTime, 
+    }
+    for( let i = 0 ; i < events.length ; i++ ){
+      if( updatedEvent.key == events[i].key ){
+        events[i] = updatedEvent
+      }
+    }
+    setEvents([...events])
+    //update the event here
   }
-
+  const onEventUpdate = (event) => {
+    console.log(event)
+    for( let i = 0 ; i < events.length ; i++ ){
+      if( event.key == events[i].key ){
+        events[i] = event
+        console.log('found and updated')
+        console.log(events[i])
+      }
+    }
+    setEvents([...events])
+  }
   return (
     <section
       style={{
@@ -200,7 +229,8 @@ const Calendar = () => {
           dateClick={handleDateClick}
           eventClick={handleEventClick}
           eventChange={handleEventChange}
-          events={events} // Set events explicitly
+          events={events}
+          // Set events explicitly
         />
       </div>
 
@@ -211,6 +241,7 @@ const Calendar = () => {
           setSelectedEvent(null);
         }}
         onEventAdded={(event) => onEventAdded(event)}
+        onEventUpdate={(event) => onEventUpdate(event)}
         onDelete={handleEventDeleted}
         event={selectedEvent}
       />
