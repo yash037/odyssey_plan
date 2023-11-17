@@ -65,15 +65,15 @@ const colorThemes = [
   // Add more color themes as needed
 ];
 
-const AddEventModal = ({ isOpen, onClose, onEventAdded, onDelete, event }) => {
-  const [title, setTitle] = useState(event ? event.title : '');
-  const [start, setStart] = useState(event ? event.start : new Date());
-  const [end, setEnd] = useState(event ? event.end : new Date());
+const AddEventModal = ({ isOpen, onClose, onEventAdded, onDelete, event , onEventUpdate }) => {
+
+  const [title, setTitle] = useState(event != null ? event.title : 'sdfsd');
+  const [start, setStart] = useState(event != null ? event.start : new Date());
+  const [end, setEnd] = useState(event != null ? event.end : new Date());
   const [reminderTiming, setReminderTiming] = useState(0); 
-  const [selectedColor, setSelectedColor] = useState(colorThemes[0].colors[0]); 
+  const [selectedColor, setSelectedColor] = useState(event != null? event.color : colorThemes[0].colors[0]); 
 
   useEffect(() => {
-    // Reseting the state when the modal is closed without an event
     if (!isOpen && !event) {
       setTitle('');
       setStart(new Date());
@@ -91,26 +91,37 @@ const AddEventModal = ({ isOpen, onClose, onEventAdded, onDelete, event }) => {
     setEnd(date);
   };
 
-  const onSubmit = (event) => {
-    event.preventDefault();
-
-    // Calculate reminder time
+  const onSubmit = (e) => {
+    e.preventDefault();
     const reminderTime = start.getTime() - reminderTiming;
-
-    onEventAdded({
-      title,
-      start,
-      end,
-      reminderTime,
-      color: selectedColor, 
-    });
-
+    if( isEditMode == true ){
+      console.log('editing')
+      onEventUpdate({
+        title,
+        start,
+        end,
+        reminderTime,
+        color: selectedColor, 
+        key : event.key,
+      })
+    }
+    else{
+      onEventAdded({
+        title,
+        start,
+        end,
+        reminderTime,
+        color: selectedColor, 
+      });
+    }
+   
+  
     onClose();
   };
 
   const handleDelete = () => {
     if (event) {
-      onDelete(event.id);
+      onDelete(event.key);
       onClose();
     }
   };
@@ -149,6 +160,9 @@ const AddEventModal = ({ isOpen, onClose, onEventAdded, onDelete, event }) => {
             <label style={{ marginBottom: '8px', display: 'block', fontSize: '14px' }}>
               Start Date
             </label>
+            {
+              console.log(title)
+            }
             <DatePicker
               selected={start}
               onChange={handleStartDateChange}

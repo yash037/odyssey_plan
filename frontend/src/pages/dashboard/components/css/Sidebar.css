@@ -59,7 +59,7 @@
 
 .file-explorer-buttons{
   display: flex;
-  flex-direction: row-reverse;
+  flex-direction: row;
 }
 
 .ant-tree-node-content-wrapper {

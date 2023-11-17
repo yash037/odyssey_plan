@@ -26,14 +26,14 @@ export default function Content({ view , databaseId }){
     )
     useEffect(
         () => {
-            console.log('in data get')
+          
             const getData = async ( databaseId ) => {
                 const res = await send.get(backendURL + '/data/getContent' , { 
                     params : {
                         databaseId :databaseId
                     }
                 })
-                console.log(res)    
+               
                 if(res.status == 200){
                     setContentData(res.data.data)
                     setComponentType(res.data.type)
@@ -54,7 +54,7 @@ export default function Content({ view , databaseId }){
             }
             getData(backendId)
            
-            console.log('out data get') 
+          
         }
     , [backendId , componentType])
     

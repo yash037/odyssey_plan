@@ -9,6 +9,7 @@ const userSchema = new mongoose.Schema({
     profilePic:String,//just have the file path
     profileURL:String,
     verified:Boolean,
+    workspaces : [ String ],
 })
 
 module.exports = {userSchema}

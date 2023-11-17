@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Tree } from 'antd';
 
@@ -9,37 +9,29 @@ import { IconButton } from "@mui/material";
 import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder';
 import PostAddIcon from '@mui/icons-material/PostAdd';
 import RenamableName from "./Renamable";
-import FolderIcon from '@mui/icons-material/Folder';
-import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
+
 import ViewKanbanIcon from '@mui/icons-material/ViewKanban';
 import EditCalendarIcon from '@mui/icons-material/EditCalendar';
-import DashboardIcon from '@mui/icons-material/Dashboard';
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+
 import StickyNote2Icon from '@mui/icons-material/StickyNote2';
 import { frontendURL } from "../../../../global/request";
 import { v4 as uuid} from "uuid";
-const ownData = [
-    {
-        key : '1',
-        title : <RenamableName/>,
-        type : 'folder',
-        children : [
-            
-        ],
-        icon : <FolderIcon/>
-        
-    }
-]
+import CapsuleButton from "../CapsuleButton";
+import Icon from "./IconProvider";
+import Search from "antd/es/input/Search";
 
+const { TreeNode } = Tree;
 export default function RecursiveSidebar({ 
-      files , 
+      setFiles ,
       setContent , 
-      name
+      name,
+      files
 }){
-    const [ gData , setGData ] = useState(ownData);
     const [ currpos , setCurrpos ] = useState('0');
     const [ keyTracker , setKeyTracker ] = useState(100);
     const [ disabled , setDisabled ] = useState(true)
+    const [ text , setText ] = useState('')
+    const [ expandedKeys , setExpandedKeys ] = useState([])
     
     const loop = (data, key, callback) => {
         for (let i = 0; i < data.length; i++) {
@@ -53,16 +45,26 @@ export default function RecursiveSidebar({
     };
     const handleAddFile = ( type , id) => {
 
-        const data = [ ...gData ]
+        const data = [ ...files ]
         if(currpos == '0') {
-            setGData( [...data , {
-                title : <RenamableName/>,
-                key : keyTracker,
+            setFiles( [...data , {
+              key : uuid(),
+              name : 'Untitled',
+              type : 'file',
+              filetype : type,
+              databaseId : id
+              
+          }])
+            setFiles(
+              [...data , {
+                key : uuid(),
+                name : 'Untitled',
                 type : 'file',
-                icon : provideIcon,
                 filetype : type,
-                databaseId : id ,
-            }])
+                databaseId : id
+                
+            }]
+            )
             setKeyTracker( keyTracker + 1 )
         }
         else {
@@ -70,50 +72,66 @@ export default function RecursiveSidebar({
               if(appendLocation.type != 'folder'){
                 return
               }
-                appendLocation.children.splice( i , 0 , {   
-                    key : `${keyTracker}`,
-                    title : <RenamableName/>,
-                    type : 'file',
-                    icon : provideIcon,
-                    filetype : type ,
-                    databaseId : id
-                } )
+                appendLocation.children.splice( i , 0 , {
+                  key : uuid(),
+                  name : 'Untitled',
+                  type : 'file',
+                  filetype : type,
+                  databaseId : id
+                  
+              } )
             } )
-            setGData(data)
+            setFiles(data)
+            setFiles(data)
             setKeyTracker(keyTracker + 1)
         }
   }
     const handleAddFolder = ( ) => {
 
-        const data = [ ...gData ]
+        const data = [ ...files ]
         if(currpos == '0') {
-            setGData( [...data , {
-                title : <RenamableName/>,
-                key : keyTracker,
-                type : 'folder',
-                children : [],
-                icon : provideIcon
-            }])
+            setFiles( [...data , {
+              key : uuid(),
+              name : 'Untitled',
+              type : 'folder',
+              children : [
+                  
+              ],
+
+              
+          }])
+          setFiles( [...data , {
+            key : uuid(),
+            name : 'Untitled',
+            type : 'folder',
+            children : [
+                
+            ],
+        }])
             setKeyTracker( keyTracker + 1 )
         }
         else {
             loop( data , currpos , ( appendLocation , i , data ) => {
-                appendLocation.children.splice( i , 0 , {   
-                    key : `${keyTracker}`,
-                    title : <RenamableName/>,
-                    type : 'folder',
-                    children : [],
-                    icon : provideIcon
-                } )
+                appendLocation.children.splice( i , 0 , {
+                  key : uuid(),
+                  name : 'Untitled',
+                  type : 'folder',
+                  children : [
+                      
+                  ],
+                  
+              } )
             } )
-            setGData(data)
+            setFiles(data)
+            setFiles(data)
             setKeyTracker(keyTracker + 1)
         }
     }
-  const onSelect = ( selectedKeys , {node}) => {
+  const onSelect = (node) => {
+    
     setCurrpos(node.key)
     if(node.type=='file'){
-      setContent({type : node.filetype, databaseId : node.databaseId})
+      setContent({type : node.filetype, databaseId : node.key})
       setDisabled(true)
     }
     else{
@@ -121,30 +139,29 @@ export default function RecursiveSidebar({
     }
    
   }
+
   const onDrop = (info) => {
-    console.log(info);
+    
     const dropKey = info.node.key;
     const dragKey = info.dragNode.key;
     const dropPos = info.node.pos.split('-');
     const dropPosition = info.dropPosition - Number(dropPos[dropPos.length - 1]);
     
-    const data = [...gData];
+    const data = [...files];
 
    
     let dragObj;
     let removefrom;
     let removeindex;
     loop(data, dragKey, (item, index, arr) => {
-      
       removefrom = arr;
       removeindex = index;
       dragObj = item;
     });
     if (!info.dropToGap) {
-      
       loop(data, dropKey, (item) => {
         if(item.type != 'folder'){
-            console.log('not possible')
+           
             return;
         }
         item.children = item.children || [];
@@ -161,7 +178,6 @@ export default function RecursiveSidebar({
     ) {
       loop(data, dropKey, (item) => {
         if(item.type != 'folder'){
-            console.log('not possible')
             return;
         }
         item.children = item.children || [];
@@ -183,18 +199,19 @@ export default function RecursiveSidebar({
       }
       removefrom.splice(removeindex, 1);
     }
-    setGData(data);
+    setFiles(data);
   };
-  const onExpand = (_placeholder , { expanded , node } ) => {
+  const onExpand = (newKeys , { expanded , node } ) => {
+    setExpandedKeys(newKeys)
     if( expanded == true ){
         setCurrpos( node.key )
     }
   }
-  const provideIcon = ({ data }) => {
-  
+  const provideIcon = ( data ) => {
+   
     if(data.type == 'folder'){
         return (
-           <FolderIcon></FolderIcon> 
+          '📁'
         )
     }
     else{ 
@@ -202,24 +219,24 @@ export default function RecursiveSidebar({
         switch(data.filetype){
             case 'calendar':
                 return(
-                    <CalendarTodayIcon/>
+                    '📅'
                 )
             
             case 'doc':
                 return (
-                    <InsertDriveFileIcon/>
+                  '📘'
                 )
             case 'note':
                 return(
-                  <StickyNote2Icon/>
+                  '📝'
                 )
             case 'board':
                   return (
-                      <DashboardIcon/>
+                      '🖽'
                   ) 
             default : 
                 return(
-                    <FolderIcon/> 
+                  '📁'
                 )
         }
         
@@ -247,8 +264,121 @@ export default function RecursiveSidebar({
     handleAddFile('note' , id)
     setContent({type : 'note', databaseId : id})
   }
+  const handleRootAddClick = () => {
+    setFiles(
+      [
+        ...files ,
+        {
+          key : uuid(),
+          type : 'folder',
+          name : 'Untitled',
+          children : [
+              
+          ],
+         
+          
+      }
+      ]
+     
+    )
+    setFiles(
+      [
+        ...files ,
+        {
+          key : uuid(),
+          type : 'folder',
+          name : 'Untitled',
+          children : [
+              
+          ],
+         
+          
+      }
+      ]
+    )
+    setKeyTracker(keyTracker + 1)
+  }
+  const renderTreeNodes = (data) => {
+     
+    let nodeArr = data.map((item) => {
+     
+      if(item.emoji == null){
+        item.emoji = (
+          provideIcon({ type :item.type , filetype :item.filetype})
+        )
+      }
+        item.title = (
+          <div onClick={()=>{
+            onSelect(item)
+          }}
+          className="node"
+          >
+              <Icon 
+                key={item.key}
+                id={item.key} 
+                emoji={item.emoji}
+                setFiles={setFiles}
+              />
+              <RenamableName
+              key={item.key}
+              name={item.name}
+              setFiles={setFiles}
+              id={item.key}
+            />
+          </div>
+          
+        )
+
+      if (item.children) {
+        return (
+          <TreeNode title={item.title} key={item.key} dataRef={item} type={item.type} filetype={item.filetype}>
+            {renderTreeNodes(item.children)}
+          </TreeNode>
+        );
+      }
+
+      return <TreeNode title={item.title} key={item.key}  />;
+    });
+
+    return nodeArr;
+  };
+  const handleSearchChange = (e) => {
+    setText(e.target.value)
+    setExpandedKeys([])
+    const recur = ( data , name ) => {
+        data.forEach((item) => {
+            if (item.name.includes(name) == true ) {
+              if( name == '' ){
+                return
+              }
+              console.log('found')
+              setExpandedKeys(
+                (expandedKeys) => (
+                  [
+                    ...expandedKeys , item.key
+                  ]
+                )
+              )
+              item.se
+            }
+            if (item.children) {
+              recur(item.children , name);
+            }
+        }
+      )
+  }
+  recur( files , e.target.value )
+  }
+  const handleBlur = () => {
+    setExpandedKeys([])
+  }
   return (
     <div>
+      <Search 
+        value={text} 
+        onChange={handleSearchChange}
+        onBlur={handleBlur}
+      />
         <div className="file-explorer-buttons">
            
             <IconButton onClick={ handleAddFolder } sx={{color : 'white'}} disabled={disabled}>
@@ -272,11 +402,17 @@ export default function RecursiveSidebar({
         draggable
         blockNode
         onDrop={onDrop}
-        onSelect={onSelect}
         onExpand={onExpand}
+        expandedKeys={expandedKeys}
         showIcon={true}
-        treeData={gData}
-        />
+        treeData={files}
+        autoExpandParent={true}
+        >
+          {renderTreeNodes(files)}
+        </Tree>
+        <CapsuleButton handler={handleRootAddClick}>
+          Create Add
+        </CapsuleButton>
     </div>
     
   );
