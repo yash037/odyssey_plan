@@ -16,6 +16,11 @@ dataRouter.post('/saveContent' ,async (req,res) => {
     
     try{
         var doc = await Doc.findOne({Id : req.body.data.databaseId })
+        console.log({ 
+            Id : req.body.data.databaseId ,
+            data : req.body.data.content , 
+            type : req.body.data.filetype
+        } )
         if( doc == null ){
             await Doc.create( { 
                 Id : req.body.data.databaseId ,

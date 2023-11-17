@@ -131,7 +131,7 @@ export default function RecursiveSidebar({
     
     setCurrpos(node.key)
     if(node.type=='file'){
-      setContent({type : node.filetype, databaseId : node.databaseId})
+      setContent({type : node.filetype, databaseId : node.key})
       setDisabled(true)
     }
     else{
@@ -139,6 +139,7 @@ export default function RecursiveSidebar({
     }
    
   }
+
   const onDrop = (info) => {
     
     const dropKey = info.node.key;
@@ -368,14 +369,15 @@ export default function RecursiveSidebar({
   }
   recur( files , e.target.value )
   }
+  const handleBlur = () => {
+    setExpandedKeys([])
+  }
   return (
     <div>
       <Search 
         value={text} 
         onChange={handleSearchChange}
-        onBlur={()=>{
-          setExpandedKeys([])
-        }}
+        onBlur={handleBlur}
       />
         <div className="file-explorer-buttons">
            
@@ -405,7 +407,6 @@ export default function RecursiveSidebar({
         showIcon={true}
         treeData={files}
         autoExpandParent={true}
-        
         >
           {renderTreeNodes(files)}
         </Tree>

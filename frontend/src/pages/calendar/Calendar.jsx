@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import AddEventModal from './AddEventModal';
@@ -7,16 +7,81 @@ import listPlugin from '@fullcalendar/list';
 import interactionPlugin from '@fullcalendar/interaction';
 import multiMonthPlugin from '@fullcalendar/multimonth';
 
+import { Navigate, useParams } from 'react-router-dom'
+import { v4 as uuid } from 'uuid'
+import { backendURL, send } from '../../global/request';
+
 const Calendar = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const calendarRef = useRef(null);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [events, setEvents] = useState([]);
+  const { id } = useParams();
+  // console.log(id)
+  console.log(events)
+  useEffect(
+    () => {
+      //fetch data here
+      try{
+        console.log('start')
+        const getData = async ( databaseId ) => {
+          const res = await send.get(
+            backendURL + '/data/getContent' , {
+              params : {
+                databaseId : databaseId
+              }
+            }
+          )
+          console.log(res)
+          if(res.status == 201){
+            setEvents([])
+          }
+          if(res.status == 200){
+            setEvents(res.data.data)
+          }
+        }
+        getData(id)
+        console.log('end')
+      }
+      catch (e){
+        console.log(e)
+      }
+     
+    }
+    
+    ,
+    [id]
+  )
+  useEffect(
+    () => {
+      const sendData = async ( databaseId ) => {
+        try{
+          const res = await send.post(backendURL + '/data/saveContent' , {
+            data : {
+              databaseId : databaseId ,
+              content : events ,
+              filetype : 'calendar'
+            }
+          })
+          console.log(res)
+          
+        } 
+        catch(e){
+          console.log(e)
+        }
+      }
+      sendData(id)
+    },
+    [events,id]
+  )
+  const handleSubmit = ( ) => {
+    
+  }
 
   const onEventAdded = (event) => {
     const calendarApi = calendarRef.current.getApi();
     calendarApi.addEvent(event);
-
+    setEvents(calendarApi.getEvents())
     setModalOpen(false);
   };
 
@@ -57,7 +122,7 @@ const Calendar = () => {
     calendarApi.changeView(viewName);
   };
 
-  const handleDateClick = (arg) => {
+  const handleDateClick = () => {
     setModalOpen(true);
   };
 
@@ -66,6 +131,10 @@ const Calendar = () => {
     setModalOpen(true);
   };
 
+  const handleEventChange = () => {
+    const calendarApi = calendarRef.current.getApi();
+    setEvents(calendarApi.getEvents())
+  }
 
   return (
     <section
@@ -130,6 +199,7 @@ const Calendar = () => {
           eventResizableFromStart={true} 
           dateClick={handleDateClick}
           eventClick={handleEventClick}
+          eventChange={handleEventChange}
           events={events} // Set events explicitly
         />
       </div>
@@ -148,4 +218,11 @@ const Calendar = () => {
   );
 };
 
+
+export function RedirectCalendar ( ){
+
+    return (
+        <Navigate to={`/calendar/${uuid()}`}></Navigate>
+    )
+}
 export default Calendar;

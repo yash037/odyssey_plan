@@ -73,6 +73,15 @@ export default function DashBoard(){
         }
         ,[personalSpace]
     )
+    const handleAdvancedSearch = ()=>{
+        console.log('open search')  
+    }
+    const handleVCS = ()=>{
+        console.log('show vcs')  
+    }
+    const hanldeSettings = ()=> {
+        console.log('show settings')                    
+    }
     return (
         <div className='dashboard'>
             
@@ -81,19 +90,16 @@ export default function DashBoard(){
             data={ [ 's1' , 's2' ] }
             />
             <div className="sidebar-div">
-                <CapsuleButton>
+                <CapsuleButton handler={handleAdvancedSearch}>
                     Search
                 </CapsuleButton>
-                <CapsuleButton>
+                <CapsuleButton handler={handleVCS}>
                     Updates
                 </CapsuleButton>
-                <CapsuleButton>
+                <CapsuleButton handler={hanldeSettings}>
                     Settings
                 </CapsuleButton>
-                <CapsuleButton>
-                    NewPage
-                </CapsuleButton>
-                
+
                 <RecursiveSidebar 
                 setFiles={setPersonalSpace}
                 files={personalSpace}
