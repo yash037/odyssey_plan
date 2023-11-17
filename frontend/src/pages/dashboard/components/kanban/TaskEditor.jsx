@@ -138,7 +138,7 @@ export default function TaskEditor({ setTaskEditorActive,setBoardData, boardData
                                 return(
                                     <MenuItem key={`m${index}`} onClick={()=>{handleLabelClick(data)}}>
                                         {data.emoji}
-                                        {data.data}
+                                        {data.name}
                                     </MenuItem>
                                 )
                             })

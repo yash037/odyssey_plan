@@ -6,6 +6,7 @@ import { useState } from "react";
 import { v4 as uuid } from "uuid";
 import TextArea from "./TextArea";
 import { BlockPicker } from 'react-color'
+import CapsuleButton from "./CapsuleButton";
 export default function AddLabelModal({ setBoardMetaData }){
     const [ open , setOpen ] = useState(false)
     const [ name , setName ] = useState('')
@@ -13,6 +14,7 @@ export default function AddLabelModal({ setBoardMetaData }){
     const [ description , setDescription ] = useState('')
     const [ color , setColor ] = useState('#FF213F')
     const [ emojiOpen , setEmojiOpen ] = useState(false)
+    const [ colorOpen , setColorOpen ] = useState(false)
     const handleAddClick = () => {
         setOpen(true)
     }
@@ -25,7 +27,7 @@ export default function AddLabelModal({ setBoardMetaData }){
     const handleNameSubmit = () => {
         //add label here id emoji and name and color description
         
-        setBoardMetaData((data)=> ({...data , label : [...data.label , {data : 'asd' , emoji : '🤗'}]}))
+        setBoardMetaData((data)=> ({...data , label : [...data.label , {name : name , description : description , emoji : emoji}]}))
         handleModalClose()
     }
     const handleEmojiClick = (e) => {
@@ -36,6 +38,10 @@ export default function AddLabelModal({ setBoardMetaData }){
     const handleColorChange = (color) => {
         console.log(color)
         setColor(color.hex)
+        setColorOpen(false)
+    }
+    const handleColorOpen = () => {
+        setColorOpen(false)
     }
        return(
         <div>
@@ -48,24 +54,46 @@ export default function AddLabelModal({ setBoardMetaData }){
             <Modal
                 onClose={handleModalClose}
                 open={open}
+                sx={{position : 'absolute' , top : '-25vh'}}
             >
                 <div className="add-board-modal">
                     <Card>
                         <CardContent>
                             <input value={name} onChange={handleNameChange} placeholder="enter name here"></input>
-                            Emoji : {emojiOpen ? <div style={{height : '10px'}}><EmojiPicker onEmojiClick={handleEmojiClick} height={'50vh'} width={'20vw'}/> </div>: <div onClick={() => {setEmojiOpen(true)}} style={{fontSize : '30px'}}>{emoji}</div>}
+                            <div style={{display : 'flex' , flexDirection : 'row', alignItems : 'baseline' }}>
+                                <div style={{display : 'flex',flexDirection : 'row',alignItems : 'baseline' , flexGrow : '1'}}>
+                                    <CapsuleButton>Emoji</CapsuleButton> {
+                                    emojiOpen ? 
+                                    <div style={{height : '10px',margin : '4px'}}>
+                                        <EmojiPicker 
+                                        onEmojiClick={handleEmojiClick} 
+                                        height={'50vh'} 
+                                        width={'20vw'}
+                                        /> 
+                                    </div>: 
+                                    <div 
+                                    onClick={() => {setEmojiOpen(true)}} 
+                                    style={{fontSize : '30px'}}>{emoji}
+                                    </div>}
+                                
+                                </div>
+                                <div style={{display : 'flex',flexDirection : 'row',alignItems : 'baseline' , flexGrow : '1'}}>
+                                    <CapsuleButton>Color</CapsuleButton> {
+                                    colorOpen?<BlockPicker 
+                                    onChangeComplete={handleColorChange}
+                                    color={color}
+                                    />:
+                                        <div onClick={()=>{setColorOpen(true)}} style={{height : '20px' , width : '20px' , backgroundColor : color , margin:'6px'}}></div>
+                                    
+                                    }
+                                </div>
+                            </div>
+                           
+                            
                             <TextArea 
                             value={description} 
                             setText={setDescription}
-                            >
-
-                            </TextArea>
-                            <BlockPicker 
-                            onChangeComplete={handleColorChange}
-                            color={color}
-                            >
-
-                            </BlockPicker>
+                            />   
                         </CardContent>
                         <CardActions>
                             <button onClick={handleNameSubmit}>Create</button>
