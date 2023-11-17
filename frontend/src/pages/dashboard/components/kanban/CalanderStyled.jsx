@@ -1,4 +1,4 @@
-import './css/Calander.css'
+import '../css/Calander.css'
 import "react-modern-calendar-datepicker/lib/DatePicker.css";
 import { Calendar } from "react-modern-calendar-datepicker";
 export default function CalendarStyled ( {setDate = ()=>{}, date = new Date()} ){

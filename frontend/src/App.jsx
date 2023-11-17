@@ -64,8 +64,8 @@ function App() {
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<DashBoard/>}/>
-            <Route path='/documents' exact element={<Redirect/>}/>  
-            <Route path='/documents/:id' exact element={<DocumentEditor/>} /> 
+            <Route path='/doc' exact element={<Redirect/>}/>  
+            <Route path='/doc/:id' exact element={<DocumentEditor/>} /> 
             <Route path="/calendar" exact element={<RedirectCalendar/>}></Route>
             <Route path="/calendar/:id" exact element={<Calendar/>}></Route>
           </Routes>

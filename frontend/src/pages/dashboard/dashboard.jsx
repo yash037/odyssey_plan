@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import { backendURL, send } from '../../global/request';
 import RecursiveSidebar from './components/sidebar/RecursiveFileExplorer';
 import  { stringify , parse } from 'flatted'
-import CapsuleButton from './components/CapsuleButton';
+import CapsuleButton from './components/kanban/CapsuleButton';
 
 // the plan is everytime a component is actually mounted 
 // 

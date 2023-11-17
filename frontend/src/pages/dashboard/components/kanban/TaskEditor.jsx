@@ -1,7 +1,7 @@
 import CapsuleButton from "./CapsuleButton"
 import { Card , CardActions ,CardHeader , CardContent , IconButton  , ButtonGroup, MenuItem } from '@mui/material'
 import TextArea from './TextArea'
-import Input  from "./Input";
+import Input  from "../Input";
 import CloseIcon from '@mui/icons-material/Close';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import FlagIcon from '@mui/icons-material/Flag';
@@ -11,21 +11,26 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 import DropdownMenu from "./DropdownMenu";
 import Calendar from './CalanderStyled'
 import { useEffect, useState } from "react";
-
+import LabelIcon from '@mui/icons-material/Label';
+import AddLabelModal from "./AddLabelModal";
 //done for modularity
 const priorityData = ['procrastinate' , 'low' , 'medium' , 'high']; //array of priority
 const kanbanData = ['Backlog' , 'Doing' , 'Review' , 'Done']; // array of kanban 
 const colors = [ 'red' , 'yellow' , 'blue' , 'green' , 'purple' , 'pink']; //array of colors
 
-export default function TaskEditor({ setTaskEditorActive,setBoardData, boardData, setIdTrack, idTrack}){
+const labelData = []
+
+export default function TaskEditor({ setTaskEditorActive,setBoardData, boardData, setIdTrack, idTrack , setBoardMetaData , boardMetaData}){
   const [date , setDate ] = useState(null);
   const [ priority , setPriority ] = useState(0);
   const [ kanban , setKanban ] = useState(0);
   const [ title , setTitle ] = useState('');
   const [text , setText ] = useState('');
+  const [ label , setLabel ] = useState([]);
   const [anchorCal, setAnchorCal] = useState(null);
   const [anchorFlag , setAnchorFlag] = useState(null);
   const [anchorKanban , setAnchorKanban] = useState(null);
+  const [ anchorLabel , setAnchorLabel ] = useState(null)
     useEffect(()=> {
         return (
             ()=> {
@@ -45,6 +50,8 @@ export default function TaskEditor({ setTaskEditorActive,setBoardData, boardData
         description : text,
         date : date,
         priority : priorityData[priority],
+        label : label
+        //insert labels here
     }]
     console.log(boardData)
     setBoardData(boardData)
@@ -53,10 +60,20 @@ export default function TaskEditor({ setTaskEditorActive,setBoardData, boardData
     setKanban(0)
     setTitle('')
     setText('')
+    setLabel([])
     setIdTrack(idTrack + 1)
   }
   const handleClose = () => {
     setTaskEditorActive(false)
+  }
+  const handleLabelClick = ( labelData ) => {
+    //label would contain id , data , emoji
+    for ( let i = 0 ; i < label.length ; i++ ){
+        if( label[i].id == labelData.id ){
+            return;            
+        }
+    } 
+    setLabel([ ...label , labelData ])
   }
   return (
     
@@ -101,7 +118,7 @@ export default function TaskEditor({ setTaskEditorActive,setBoardData, boardData
                         }
                                   
                     </DropdownMenu>
-                    <DropdownMenu icon={<SupportIcon style={{color : 'red'}}/>} popUp={true} anchorEl={anchorKanban} setAnchorEl={setAnchorKanban}>
+                    <DropdownMenu icon={<SupportIcon style={{color : 'red'}}/>} popUp={true} anchorEl={anchorLabel} setAnchorEl={setAnchorLabel}>
                         {
                             boardData.map(( data , index ) => {
                                 return (
@@ -111,10 +128,25 @@ export default function TaskEditor({ setTaskEditorActive,setBoardData, boardData
                                     </MenuItem>
                                 )
                             })
+                           
                         }
-                                
+                                 
                     </DropdownMenu>
-                    
+                    <DropdownMenu icon={<LabelIcon style={{color : 'lightcoral'}}></LabelIcon>} popUp={true} anchorEl={anchorKanban} setAnchorEl={setAnchorKanban}>
+                        {
+                            boardMetaData.label.map((data , index) => {
+                                return(
+                                    <MenuItem key={`m${index}`} onClick={()=>{handleLabelClick(data)}}>
+                                        {data.emoji}
+                                        {data.data}
+                                    </MenuItem>
+                                )
+                            })
+                        }
+                        <MenuItem>
+                            <AddLabelModal setBoardMetaData={setBoardMetaData}/>
+                        </MenuItem>
+                    </DropdownMenu>
                 </ButtonGroup>
                 <IconButton sx={{position : 'absolute' , right : '2vw' ,color : 'gold'}} onClick={ ()=> {
                     handleClose()

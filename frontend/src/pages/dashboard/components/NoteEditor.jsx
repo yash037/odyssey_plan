@@ -6,7 +6,7 @@ import "@blocknote/core/style.css";
 import { useEffect, useState } from "react";
 import noteData from "./content/utils/noteData";
 
-export default function NoteEditor({data , databaseId}) {
+export default function NoteEditor({data , databaseId , metaData}) {
     const  [ markdown , setMarkdown ] = useState( Array.isArray(data)==true ? noteData : data )
     const saveBlocksAsMarkdown = async (editor) => {
       const newMarkdown = await editor.blocksToMarkdown(editor.topLevelBlocks);

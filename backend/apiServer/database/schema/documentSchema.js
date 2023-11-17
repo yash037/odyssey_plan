@@ -6,6 +6,7 @@ const documentSchema = new mongoose.Schema({
     data : Object,
     type : String,
     activeMembers : [ { Id : String , name : String } ],
+    metaData : Object
 })
 
 module.exports = { documentSchema }

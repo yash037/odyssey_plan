@@ -164,6 +164,7 @@ const Calendar = () => {
       }
     }
     setEvents([...events])
+    window.location.reload()
   }
   return (
     <section

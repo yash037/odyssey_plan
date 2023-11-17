@@ -16,7 +16,7 @@ import EditCalendarIcon from '@mui/icons-material/EditCalendar';
 import StickyNote2Icon from '@mui/icons-material/StickyNote2';
 import { frontendURL } from "../../../../global/request";
 import { v4 as uuid} from "uuid";
-import CapsuleButton from "../CapsuleButton";
+import CapsuleButton from "../kanban/CapsuleButton";
 import Icon from "./IconProvider";
 import Search from "antd/es/input/Search";
 
@@ -82,7 +82,6 @@ export default function RecursiveSidebar({
               } )
             } )
             setFiles(data)
-            setFiles(data)
             setKeyTracker(keyTracker + 1)
         }
   }
@@ -133,6 +132,13 @@ export default function RecursiveSidebar({
     if(node.type=='file'){
       setContent({type : node.filetype, databaseId : node.key})
       setDisabled(true)
+      if(node.filetype){
+        console.log(node.filetype)
+        if( node.filetype == 'doc' || node.filetype == 'calendar'){
+          window.open(frontendURL + `/${node.filetype}/${node.key}` , '_blank')
+        }
+        
+      }
     }
     else{
       setDisabled(false)

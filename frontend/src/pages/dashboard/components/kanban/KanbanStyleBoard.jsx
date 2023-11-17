@@ -2,17 +2,17 @@
 import { useEffect, useState } from 'react';
 import { DragDropContext } from 'react-beautiful-dnd';
 import DroppableList from './DropableList';
-import './css/KanbanBoard.css'
+import '../css/KanbanBoard.css'
 import CapsuleButton from './CapsuleButton';
 import TaskEditor from './TaskEditor';
-import { backendURL, send } from '../../../global/request';
+import { backendURL, send } from '../../../../global/request';
 import AddBoard from './AddBoard';
-import kanbanData from './content/utils/kanbanData';
+import kanbanData from '../content/utils/kanbanData';
 const colors = [ 'red' , 'yellow' , 'blue' , 'green' , 'purple' , 'pink'];
 
-function KanbanStyleBoard( { data , databaseId } ) {
-  console.log(Array.isArray(data))
+function KanbanStyleBoard( { data , databaseId , metaData} ) {
   const [boardData, setBoardData] = useState( data );
+  const [ boardMetaData , setBoardMetaData ] = useState( metaData )
   const [ taskEditorActive , setTaskEditorActive ] = useState(true);
   const [ idTrack , setIdTrack ] = useState(100);
  
@@ -20,7 +20,12 @@ function KanbanStyleBoard( { data , databaseId } ) {
     //caused some isssus beware!!
     setBoardData(data)
   },[data])
-  
+  useEffect(
+    () => {
+      setBoardMetaData(metaData)
+    }
+    ,[metaData]
+  )
   useEffect(()=>{
     return(
       ()=>{
@@ -28,6 +33,7 @@ function KanbanStyleBoard( { data , databaseId } ) {
             data : {
                   databaseId : databaseId,
                   content :  boardData ,
+                  metaData : boardMetaData,
                   filetype :  'board',
               }
             })
@@ -82,7 +88,7 @@ function KanbanStyleBoard( { data , databaseId } ) {
     setIdTrack((id)=>(id + 1)) //workaround for some bug
     //something is wrong with state
   }
-  if(boardData.map == null){
+  if(boardData.map == null||boardMetaData.label == null||boardMetaData.label.map == null){
     return (
       <>
         NULL
@@ -92,9 +98,8 @@ function KanbanStyleBoard( { data , databaseId } ) {
   return (
     <div className="KanbanStyleBoard">
         <DragDropContext onDragEnd={handleOnDragEnd}>
-        { 
-           
-            boardData.map((data , index) => (
+        {
+          boardData.map((data , index) => (
                 <div key={index} className='drop-list'>
                     <div className='list-header'>
                         <div className='list-color' style={{backgroundColor:colors[index]}}></div>
@@ -136,13 +141,12 @@ function KanbanStyleBoard( { data , databaseId } ) {
               setTaskEditorActive={setTaskEditorActive}
               setBoardData={setBoardData}
               boardData={boardData} 
+              setBoardMetaData={setBoardMetaData}
+              boardMetaData={boardMetaData}
               setIdTrack={setIdTrack}
               idTrack={idTrack}
               />
-             }
-             
-              
-            
+             } 
           </div>
     </div>
   );

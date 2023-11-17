@@ -1,5 +1,5 @@
 import { Draggable } from "react-beautiful-dnd";
-import './css/KanbanBoard.css'
+import '../css/KanbanBoard.css'
 import { IconButton } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
 
