@@ -7,7 +7,7 @@ import noteData from "./utils/noteData"
 
 export default function Content({ view , databaseId }){
     const [contentData , setContentData] = useState( view == 'board' ? kanbanData : noteData ) 
-    const [ metaData , setMetaData ] = useState([])
+    const [ metaData , setMetaData ] = useState({label : []})
     const [ backendId , setBackendId ] = useState( databaseId )
     const [ componentType , setComponentType ] = useState( view )
     useEffect(
@@ -35,7 +35,7 @@ export default function Content({ view , databaseId }){
                 })
                
                 if(res.status == 200){
-                    console.log(res.data.metaData)
+                    console.log(res.data)
                     setContentData(res.data.data)
                     setComponentType(res.data.type)
                     setMetaData(res.data.metaData)

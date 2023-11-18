@@ -27,15 +27,21 @@ function KanbanStyleBoard( { data , databaseId , metaData} ) {
     ,[metaData]
   )
   useEffect(()=>{
-          console.log(boardMetaData)
-          send.post(backendURL + '/data/saveContent' , {
-              data : {
-                  databaseId : databaseId,
-                  content :  boardData ,
-                  metaData : boardMetaData,
-                  filetype :  'board',
-              }
-            })
+          return(
+            () => {
+              console.log(boardMetaData)
+              console.log(boardData)
+              send.post(backendURL + '/data/saveContent' , {
+                  data : {
+                      databaseId : databaseId,
+                      content :  boardData ,
+                      metaData : boardMetaData,
+                      filetype :  'board',
+                  }
+                })
+            }
+          )
+         
           }
         
     ,[boardData,databaseId,boardMetaData])

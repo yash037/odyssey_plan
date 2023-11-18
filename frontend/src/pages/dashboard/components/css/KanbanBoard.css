@@ -94,3 +94,8 @@
     justify-items: center;
     margin: 4px;
 }
+
+.emoji-div{
+    position: absolute;
+    display: flex;
+}

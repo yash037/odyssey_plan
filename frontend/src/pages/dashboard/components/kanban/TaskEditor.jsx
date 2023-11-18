@@ -18,7 +18,6 @@ const priorityData = ['procrastinate' , 'low' , 'medium' , 'high']; //array of p
 const kanbanData = ['Backlog' , 'Doing' , 'Review' , 'Done']; // array of kanban 
 const colors = [ 'red' , 'yellow' , 'blue' , 'green' , 'purple' , 'pink']; //array of colors
 
-const labelData = []
 
 export default function TaskEditor({ setTaskEditorActive,setBoardData, boardData, setIdTrack, idTrack , setBoardMetaData , boardMetaData}){
   const [date , setDate ] = useState(null);
@@ -39,6 +38,7 @@ export default function TaskEditor({ setTaskEditorActive,setBoardData, boardData
         )
     }
     ,[])
+    console.log(label)
   const handleMenuItemClick = ( stateSetter , anchorSetter , index ) => {
     stateSetter(index);
     anchorSetter(null);
@@ -54,7 +54,7 @@ export default function TaskEditor({ setTaskEditorActive,setBoardData, boardData
         //insert labels here
     }]
     console.log(boardData)
-    setBoardData(boardData)
+    setBoardData([...boardData])
     setDate()
     setPriority(0)
     setKanban(0)
@@ -68,12 +68,14 @@ export default function TaskEditor({ setTaskEditorActive,setBoardData, boardData
   }
   const handleLabelClick = ( labelData ) => {
     //label would contain id , data , emoji
+    console.log(labelData)
     for ( let i = 0 ; i < label.length ; i++ ){
         if( label[i].id == labelData.id ){
             return;            
         }
     } 
-    setLabel([ ...label , labelData ])
+    
+    setLabel((label) => ([ ...label , labelData ]))
     
   }
   return (

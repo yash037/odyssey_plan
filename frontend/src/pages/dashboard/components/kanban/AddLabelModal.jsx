@@ -27,7 +27,7 @@ export default function AddLabelModal({ setBoardMetaData }){
     const handleNameSubmit = () => {
         //add label here id emoji and name and color description
         
-        setBoardMetaData((data)=> ({...data , label : [...data.label , {name : name , description : description , emoji : emoji}]}))
+        setBoardMetaData((data)=> ({...data , label : [...data.label , {name : name , description : description , emoji : emoji , id : uuid()}]}))
         handleModalClose()
     }
     const handleEmojiClick = (e) => {
