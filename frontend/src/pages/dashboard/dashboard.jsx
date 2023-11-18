@@ -17,6 +17,10 @@ export default function DashBoard(){
     const view = content.type
     const databaseId = content.databaseId  
     useEffect(
+        ()=>{console.log(content.databaseId)}
+        ,[content]
+    )
+    useEffect(
         () => {
             const getData = async () => {
                 const res = await   send.get(backendURL + '/data/getFolder' , {

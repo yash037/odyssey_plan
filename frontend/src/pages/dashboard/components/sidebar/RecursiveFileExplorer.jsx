@@ -130,7 +130,7 @@ export default function RecursiveSidebar({
     
     setCurrpos(node.key)
     if(node.type=='file'){
-      setContent({type : node.filetype, databaseId : node.key})
+      setContent({type : node.filetype, databaseId : node.databaseId})
       setDisabled(true)
       if(node.filetype){
         console.log(node.filetype)

@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import noteData from "./content/utils/noteData";
 
 export default function NoteEditor({data , databaseId , metaData}) {
+    const [ noteMetaData , setNoteMetaData ] = useState(metaData)
     const  [ markdown , setMarkdown ] = useState( Array.isArray(data)==true ? noteData : data )
     const saveBlocksAsMarkdown = async (editor) => {
       const newMarkdown = await editor.blocksToMarkdown(editor.topLevelBlocks);
@@ -61,11 +62,12 @@ export default function NoteEditor({data , databaseId , metaData}) {
                     databaseId : databaseId,
                     content :  markdown,
                     filetype :  'note',
+                    metaData : noteMetaData
                 }
               })
             }
           )
-      },[markdown,databaseId])
+      },[markdown,databaseId,noteMetaData])
 
   return (
     <>

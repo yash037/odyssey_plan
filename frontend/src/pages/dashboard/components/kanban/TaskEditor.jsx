@@ -45,7 +45,7 @@ export default function TaskEditor({ setTaskEditorActive,setBoardData, boardData
   }
   const handleCreateClick = () => {
     boardData[kanban].data = [...boardData[kanban].data , { 
-        id:idTrack.toString() ,
+        id : idTrack.toString() ,
         name : title ,
         description : text,
         date : date,
@@ -74,6 +74,7 @@ export default function TaskEditor({ setTaskEditorActive,setBoardData, boardData
         }
     } 
     setLabel([ ...label , labelData ])
+    
   }
   return (
     

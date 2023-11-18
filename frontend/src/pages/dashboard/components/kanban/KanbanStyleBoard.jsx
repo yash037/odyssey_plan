@@ -27,10 +27,9 @@ function KanbanStyleBoard( { data , databaseId , metaData} ) {
     ,[metaData]
   )
   useEffect(()=>{
-    return(
-      ()=>{
+          console.log(boardMetaData)
           send.post(backendURL + '/data/saveContent' , {
-            data : {
+              data : {
                   databaseId : databaseId,
                   content :  boardData ,
                   metaData : boardMetaData,
@@ -38,8 +37,8 @@ function KanbanStyleBoard( { data , databaseId , metaData} ) {
               }
             })
           }
-        )
-    },[boardData,databaseId])
+        
+    ,[boardData,databaseId,boardMetaData])
 
   function handleOnDragEnd(result) {
     const { destination, source } = result;
