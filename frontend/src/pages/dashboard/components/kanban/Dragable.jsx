@@ -1,6 +1,6 @@
 import { Draggable } from "react-beautiful-dnd";
 import '../css/KanbanBoard.css'
-import { IconButton, MenuItem } from "@mui/material";
+import { IconButton, MenuItem, Tooltip } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import EditIcon from '@mui/icons-material/Edit';
@@ -8,27 +8,38 @@ import DropdownMenu from "./DropdownMenu";
 import { useState } from "react";
 export default function DraggableItem({id, name, index , handleDelete , boardIndex , setBoardData , itemData , handleMountEditTask}){
     const [ dropdownAnchor , setDropdownAnchor ] = useState(null)
+    const [ labeldropdownAnchor , setLabeldropdownAnchor ] = useState(null)
     return (
         <Draggable key={ id } draggableId={ id } index={ index }>
         {(provided) => (
           <div ref={ provided.innerRef } { ...provided.draggableProps } { ...provided.dragHandleProps } className="draggable-div">
-            <div className="emoji-div">
+           <div className="emoji-div">
+           <DropdownMenu 
+           icon={<EmojiDisplay itemData={itemData}/>} 
+           setAnchorEl={setLabeldropdownAnchor} 
+           anchorEl={labeldropdownAnchor} 
+           popUp={false}
+           >
               {
-                
-                itemData.label.map((item , index) => (
-                  <div className="board-label" key={index} style={{border : `solid 2px ${item.color}`}}>
-                    {console.log(item)}
-                    <span>
-                      {item.emoji}
-                    </span>
-                    <span>
-                      {item.name}
-                    </span>
-                  </div>
-                  
-                ))
+                itemData.label.map(
+                  (item , index) => (
+                    <MenuItem key={index}>
+                      { 
+                        item.emoji
+                      }
+                      <Tooltip title={item.description}>
+                      {
+                        item.name
+                      }
+                      </Tooltip>
+                      
+                    </MenuItem>
+                  )
+                )
               }
-            </div>
+            </DropdownMenu> 
+           </div>
+          
            
               <p>
                 { name }
@@ -45,7 +56,9 @@ export default function DraggableItem({id, name, index , handleDelete , boardInd
                     </IconButton>
                     Delete
                 </MenuItem>
-                <MenuItem onClick={() => {handleMountEditTask(boardIndex , index)}}>
+                <MenuItem onClick={() => {
+                    handleMountEditTask(boardIndex , index)
+                  }}>
                     <IconButton>
                       <EditIcon></EditIcon>
                     </IconButton>
@@ -58,4 +71,27 @@ export default function DraggableItem({id, name, index , handleDelete , boardInd
         )}
       </Draggable>
     )
+}
+
+function EmojiDisplay( {itemData} ){
+  return (
+    <div className="emoji-div">
+              {
+                
+                itemData.label.slice(0,3).map((item , index) => (
+                  <div className="board-label" key={index}>
+                    <span>
+                      {item.emoji}
+                    </span>
+                  </div>
+                  
+                ))
+              }
+             
+                {
+                  itemData.label.length>3?<span>+</span> : ''
+                }
+             
+            </div>
+  )
 }

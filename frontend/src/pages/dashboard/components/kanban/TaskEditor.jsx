@@ -20,14 +20,14 @@ const kanbanData = ['Backlog' , 'Doing' , 'Review' , 'Done']; // array of kanban
 const colors = [ 'red' , 'yellow' , 'blue' , 'green' , 'purple' , 'pink']; //array of colors
 
 
-export default function TaskEditor({ setTaskEditorActive,setBoardData, boardData, setIdTrack, idTrack , setBoardMetaData , boardMetaData , handleEditTask ,taskEditorData , setTaskEditorData}){
+export default function TaskEditor({ setTaskEditorActive,setBoardData, boardData, setIdTrack, idTrack , setBoardMetaData , boardMetaData , handleEditTask ,taskEditorData , setTaskEditorData , kanbanIndex = 0}){
     console.log(taskEditorData)
-  const [date , setDate ] = useState(null);
+  const [date , setDate ] = useState(taskEditorData?taskEditorData.data:null);
   const [ priority , setPriority ] = useState(taskEditorData?taskEditorData.priorityData:0);
-  const [ kanban , setKanban ] = useState(0);
+  const [ kanban , setKanban ] = useState(kanbanIndex);
   const [ title , setTitle ] = useState(taskEditorData?taskEditorData.name:'');
   const [text , setText ] = useState(taskEditorData?taskEditorData.description:'');
-  const [ label , setLabel ] = useState([]);
+  const [ label , setLabel ] = useState(taskEditorData?taskEditorData.label:[]);
   const [anchorCal, setAnchorCal] = useState(null);
   const [anchorFlag , setAnchorFlag] = useState(null);
   const [anchorKanban , setAnchorKanban] = useState(null);
@@ -120,6 +120,9 @@ export default function TaskEditor({ setTaskEditorActive,setBoardData, boardData
                 {/* <div className="text-editor-title">
                     In    <div style={{display:'inline' , margin:'0 10%'}}><CapsuleButton> Something</CapsuleButton> </div>       For    <div style={{display:'inline' , marginLeft:'10%'}}><CapsuleButton> Something</CapsuleButton> </div>
                 </div> */}
+                <div>
+                    {label.map((item , index)=>(<span key={index}>{item.emoji}</span>))}
+                </div>
                 <div>
                     <TextArea setText={setText} value={text}></TextArea>
                 </div>

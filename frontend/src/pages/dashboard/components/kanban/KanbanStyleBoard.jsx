@@ -101,6 +101,7 @@ function KanbanStyleBoard( { data , databaseId , metaData} ) {
   }
   const handleMountEditTask = (boardIndex , elementIndex) => {
     setTaskEditorActive(true)
+    setIdTrack(idTrack+1)
     setTaskEditorData(boardData[boardIndex].data[elementIndex])
   }
   if(boardData.map == null||boardMetaData.label == null||boardMetaData.label.map == null){
