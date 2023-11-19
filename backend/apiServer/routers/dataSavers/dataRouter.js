@@ -6,8 +6,11 @@ const bodyParser = require('body-parser')
 
 const documentSchema = require('../../database/schema/documentSchema').documentSchema
 const workspaceSchema = require('../../database/schema/workspaceSchema').workspaceSchema 
+const userSchema = require('../../database/schema/userSchema').userSchema
+
 const Workspace = mongoose.model('Workspace' , workspaceSchema)
 const Doc = mongoose.model('Documents' , documentSchema)
+const User = mongoose.model('User' , userSchema)
 
 dataRouter.use( bodyParser.json({limit : '50mb'}) )
 dataRouter.use( bodyParser.urlencoded({extended : true}) )
@@ -96,4 +99,42 @@ dataRouter.post('/saveFolder' , async ( req , res ) => {
         res.end()
 })
 
+dataRouter.post('/createWorkspace' , async (req,res) => {
+    // add the workspace ID to user's workspace array
+    // this same array would be used to check if a user has access to a specific workspace
+    try{
+        console.log(req.body.data)
+        const user = await User.findOne({Id : req.user.Id})
+        console.log(req.user , user)
+        const accessType = req.body.data.accessType
+        const name = req.body.data.name
+        const icon = req.body.data.icon
+        const  workspaceId = req.body.data.workspaceId
+        await Workspace.create({
+            Id : workspaceId ,
+            accessType : accessType,
+            name : name,
+            icon : icon ,
+            folderStructure : '[[]]'
+        })
+        user.workspaces = [ ...user.workspaces , workspaceId ]
+        await user.save()
+        res.status(200).send({workspaceId : workspaceId})
+    }
+    catch (e) {
+        console.log(e)
+        res.status(400)
+    }
+   
+})
+dataRouter.get('/getWorkspaces' , async (req , res)=> {
+    const workSpaceIdArray = req.user.workspaces
+    var workspace = {}
+    for( let  i = 0 ; i < workSpaceIdArray.length ; i++ ){
+        const space = await Workspace.findOne({Id : workSpaceIdArray[i]})
+        workspace = {...workspace , [workSpaceIdArray[i]] : space}
+    }
+    res.status(200).send({ workSpaceIdArray : workSpaceIdArray , workspace : workspace })
+    console.log(workspace)
+})
 module.exports = dataRouter

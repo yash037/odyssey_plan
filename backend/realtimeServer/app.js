@@ -8,6 +8,7 @@ const mongoose = require('mongoose')
 
 const Document = mongoose.model('document' , require('./database/documentSchema').documentSchema )
 const User = mongoose.model('user' , require('./database/userSchema').userSchema )
+const Workspace = mongoose.model('workspaces' , require('./database/workspaceSchema.js').workspaceSchema)
 
 const io = Server(server , {
     cors : {
@@ -63,7 +64,24 @@ io.on('connection' , (socket) => {
          console.log(memberId.substr( 1 , memberId.length - 1 ) + ' moved')
         socket.to(documentId).emit( 'cursor-movement' , memberId.substr( 1 , memberId.length - 1 ) , selection );
     })
-})
+
+    socket.on( 'join-room' , async ( workSpaceId ) => { //every time the file explorer is loaded in frontend this will be emmitted
+        var workspace = await Workspace.findOne({Id : workSpaceId})
+        if( workspace == null ){
+             await Workspace.create({Id : workSpaceId}) 
+        }
+        workspace = await Workspace.findOne({Id : workSpaceId})
+        socket.join(workSpaceId)
+        socket.to(workSpaceId).emit('load-file-explorer' , workspace)
+    })
+
+    socket.on( 'update-workspace' , async (workSpaceId , workSpaceData) => { //update the workspace and tell everyone to update it too
+        var workspace = await Workspace.findOne({Id : workSpaceId})
+        workspace.folderStructure = workSpaceData
+        await workspace.save()
+        socket.to(workSpaceId).emit('load-file-explorer' , workspace) 
+    })
+}) 
 
 mongoose.connect("mongodb://127.0.0.1:27017/Odeysey").then(() => {
     console.log('mongodb is online');

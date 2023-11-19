@@ -21,7 +21,7 @@ passport.use(new GoogleStrategy({
         var user=await User.findOne({email:profile.emails[0].value});
     
         if(user==null){
-          await User.create({Id:profile.id,username:profile.displayName,email:profile.emails[0].value,profilePic:profile.photos[0].value}); 
+          await User.create({Id:profile.id,username:profile.displayName,email:profile.emails[0].value,profilePic:profile.photos[0].value , workspaces : []}); 
         }
         user=await User.findOne({email:profile.emails[0].value});
         user.profilePic=profile.photos[0].value;
@@ -57,7 +57,7 @@ async(accesstoken,refreshtoken,profile,done)=>{
   var user = await User.findOne({email:userEmail});
 
   if(user == null){
-    await User.create({Id:profile.id,username:profile.username,email:userEmail,profileURL:profile.profileUrl,profilePic : profile.photos[0].value}); 
+    await User.create({Id:profile.id,username:profile.username,email:userEmail,profileURL:profile.profileUrl,profilePic : profile.photos[0].value,workspaces : []}); 
   }
   user = await User.findOne({Id:profile.id});
   console.log(user)
