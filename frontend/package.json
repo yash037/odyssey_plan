@@ -36,6 +36,7 @@
     "react": "^18.2.0",
     "react-beautiful-dnd": "^13.1.1",
     "react-calendar": "^4.6.1",
+    "react-color": "^2.19.3",
     "react-complex-tree": "^2.2.3",
     "react-cookie": "^6.1.1",
     "react-datepicker": "^4.21.0",

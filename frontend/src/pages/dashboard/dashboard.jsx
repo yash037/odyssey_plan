@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import { backendURL, send } from '../../global/request';
 import RecursiveSidebar from './components/sidebar/RecursiveFileExplorer';
 import  { stringify , parse } from 'flatted'
-import CapsuleButton from './components/CapsuleButton';
+import CapsuleButton from './components/kanban/CapsuleButton';
 
 // the plan is everytime a component is actually mounted 
 // 
@@ -16,6 +16,10 @@ export default function DashBoard(){
     const [ personalSpace , setPersonalSpace ] = useState([]) //personal space is at index 0
     const view = content.type
     const databaseId = content.databaseId  
+    useEffect(
+        ()=>{console.log(content.databaseId)}
+        ,[content]
+    )
     useEffect(
         () => {
             const getData = async () => {

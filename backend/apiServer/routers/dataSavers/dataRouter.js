@@ -30,6 +30,7 @@ dataRouter.post('/saveContent' ,async (req,res) => {
         }
         else{
             doc.data = req.body.data.content
+            doc.metaData = req.body.data.metaData
             await doc.save()
         }
         res.status(200)
@@ -47,7 +48,11 @@ dataRouter.get('/getContent' , async (req,res)=>{
         res.status(201)   //201 flag here represent's use default data
     }
     else{
-        res.status(200).send({ data : doc.data , type : doc.type })
+        res.status(200).send({ 
+            data : doc.data , 
+            type : doc.type , 
+            metaData : doc.metaData==null?{}:doc.metaData
+        })
     }
     res.end()
 })

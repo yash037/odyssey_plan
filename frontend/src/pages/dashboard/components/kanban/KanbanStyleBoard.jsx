@@ -2,38 +2,50 @@
 import { useEffect, useState } from 'react';
 import { DragDropContext } from 'react-beautiful-dnd';
 import DroppableList from './DropableList';
-import './css/KanbanBoard.css'
+import '../css/KanbanBoard.css'
 import CapsuleButton from './CapsuleButton';
 import TaskEditor from './TaskEditor';
-import { backendURL, send } from '../../../global/request';
+import { backendURL, send } from '../../../../global/request';
 import AddBoard from './AddBoard';
-import kanbanData from './content/utils/kanbanData';
+import kanbanData from '../content/utils/kanbanData';
 const colors = [ 'red' , 'yellow' , 'blue' , 'green' , 'purple' , 'pink'];
 
-function KanbanStyleBoard( { data , databaseId } ) {
-  console.log(Array.isArray(data))
+function KanbanStyleBoard( { data , databaseId , metaData} ) {
   const [boardData, setBoardData] = useState( data );
+  const [ boardMetaData , setBoardMetaData ] = useState( metaData )
   const [ taskEditorActive , setTaskEditorActive ] = useState(true);
+  const [ taskEditorData , setTaskEditorData ] = useState(null)
   const [ idTrack , setIdTrack ] = useState(100);
- 
+  
   useEffect(()=>{ //listen's to change's in prop
     //caused some isssus beware!!
     setBoardData(data)
   },[data])
-  
+  useEffect(
+    () => {
+      setBoardMetaData(metaData)
+    }
+    ,[metaData]
+  )
   useEffect(()=>{
-    return(
-      ()=>{
-          send.post(backendURL + '/data/saveContent' , {
-            data : {
-                  databaseId : databaseId,
-                  content :  boardData ,
-                  filetype :  'board',
-              }
-            })
+          return(
+            () => {
+              console.log(boardMetaData)
+              console.log(boardData)
+              send.post(backendURL + '/data/saveContent' , {
+                  data : {
+                      databaseId : databaseId,
+                      content :  boardData ,
+                      metaData : boardMetaData,
+                      filetype :  'board',
+                  }
+                })
+            }
+          )
+         
           }
-        )
-    },[boardData,databaseId])
+        
+    ,[boardData,databaseId,boardMetaData])
 
   function handleOnDragEnd(result) {
     const { destination, source } = result;
@@ -82,7 +94,17 @@ function KanbanStyleBoard( { data , databaseId } ) {
     setIdTrack((id)=>(id + 1)) //workaround for some bug
     //something is wrong with state
   }
-  if(boardData.map == null){
+  const handleEditTask = (boardIndex , elementIndex , newData) => {
+    boardData[boardIndex].data[elementIndex] = newData
+    setBoardData([...boardData])
+    setTaskEditorData(null)
+  }
+  const handleMountEditTask = (boardIndex , elementIndex) => {
+    setTaskEditorActive(true)
+    setIdTrack(idTrack+1)
+    setTaskEditorData(boardData[boardIndex].data[elementIndex])
+  }
+  if(boardData.map == null||boardMetaData.label == null||boardMetaData.label.map == null){
     return (
       <>
         NULL
@@ -92,9 +114,8 @@ function KanbanStyleBoard( { data , databaseId } ) {
   return (
     <div className="KanbanStyleBoard">
         <DragDropContext onDragEnd={handleOnDragEnd}>
-        { 
-           
-            boardData.map((data , index) => (
+        {
+          boardData.map((data , index) => (
                 <div key={index} className='drop-list'>
                     <div className='list-header'>
                         <div className='list-color' style={{backgroundColor:colors[index]}}></div>
@@ -113,7 +134,9 @@ function KanbanStyleBoard( { data , databaseId } ) {
                     name={data.name} 
                     index={index} 
                     handleDelete={handleDeleteTask} 
-                    setBoardData={setBoardData}/>
+                    setBoardData={setBoardData}
+                    handleMountEditTask={handleMountEditTask} //mounts the task editor to edit the current task
+                    />
                     <CapsuleButton text={'Add a Task'} handler={() => {
                       setTaskEditorActive(!taskEditorActive)
                     }}/>
@@ -136,13 +159,15 @@ function KanbanStyleBoard( { data , databaseId } ) {
               setTaskEditorActive={setTaskEditorActive}
               setBoardData={setBoardData}
               boardData={boardData} 
+              setBoardMetaData={setBoardMetaData}
+              boardMetaData={boardMetaData}
               setIdTrack={setIdTrack}
               idTrack={idTrack}
+              handleEditTask={handleEditTask}
+              taskEditorData={taskEditorData}
+              setTaskEditorData={setTaskEditorData}
               />
-             }
-             
-              
-            
+             } 
           </div>
     </div>
   );

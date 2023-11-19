@@ -94,3 +94,15 @@
     justify-items: center;
     margin: 4px;
 }
+
+.emoji-div{
+    display: flex;
+}
+
+.board-label{
+    display: inline-block;
+   border-radius: 25px; 
+   text-align: center;
+   text-decoration: none;
+   cursor: pointer;
+}
