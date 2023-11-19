@@ -4,7 +4,7 @@ import   DraggableItem  from './Dragable'
 const colors = [ 'red' , 'yellow' , 'blue' , 'green' , 'purple' , 'pink']; //array of colors
 
 
-export default function DroppableList({characters , name , style , index , handleDelete , setBoardData}){
+export default function DroppableList({characters , name , style , index , handleDelete , setBoardData , handleMountEditTask}){
   const boardIndex = index
     return (
         
@@ -22,7 +22,9 @@ export default function DroppableList({characters , name , style , index , handl
             itemData={item}
             handleDelete={handleDelete} 
             boardIndex={boardIndex} 
-            setBoardData={setBoardData}/>
+            setBoardData={setBoardData}
+            handleMountEditTask={handleMountEditTask}
+            />
           );
         })}
         {provided.placeholder}

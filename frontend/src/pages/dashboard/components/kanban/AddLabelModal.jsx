@@ -9,7 +9,7 @@ import { BlockPicker } from 'react-color'
 import CapsuleButton from "./CapsuleButton";
 export default function AddLabelModal({ setBoardMetaData }){
     const [ open , setOpen ] = useState(false)
-    const [ name , setName ] = useState('')
+    const [ name , setName ] = useState('No Name')
     const [ emoji , setEmoji ] = useState('😴')
     const [ description , setDescription ] = useState('')
     const [ color , setColor ] = useState('#FF213F')
@@ -27,7 +27,7 @@ export default function AddLabelModal({ setBoardMetaData }){
     const handleNameSubmit = () => {
         //add label here id emoji and name and color description
         
-        setBoardMetaData((data)=> ({...data , label : [...data.label , {name : name , description : description , emoji : emoji , id : uuid()}]}))
+        setBoardMetaData((data)=> ({...data , label : [...data.label , {name : name , description : description , emoji : emoji , id : uuid() , color : color}]}))
         handleModalClose()
     }
     const handleEmojiClick = (e) => {

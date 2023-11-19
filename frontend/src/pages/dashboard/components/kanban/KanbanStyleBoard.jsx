@@ -14,8 +14,9 @@ function KanbanStyleBoard( { data , databaseId , metaData} ) {
   const [boardData, setBoardData] = useState( data );
   const [ boardMetaData , setBoardMetaData ] = useState( metaData )
   const [ taskEditorActive , setTaskEditorActive ] = useState(true);
+  const [ taskEditorData , setTaskEditorData ] = useState(null)
   const [ idTrack , setIdTrack ] = useState(100);
- 
+  
   useEffect(()=>{ //listen's to change's in prop
     //caused some isssus beware!!
     setBoardData(data)
@@ -93,6 +94,15 @@ function KanbanStyleBoard( { data , databaseId , metaData} ) {
     setIdTrack((id)=>(id + 1)) //workaround for some bug
     //something is wrong with state
   }
+  const handleEditTask = (boardIndex , elementIndex , newData) => {
+    boardData[boardIndex].data[elementIndex] = newData
+    setBoardData([...boardData])
+    setTaskEditorData(null)
+  }
+  const handleMountEditTask = (boardIndex , elementIndex) => {
+    setTaskEditorActive(true)
+    setTaskEditorData(boardData[boardIndex].data[elementIndex])
+  }
   if(boardData.map == null||boardMetaData.label == null||boardMetaData.label.map == null){
     return (
       <>
@@ -123,7 +133,9 @@ function KanbanStyleBoard( { data , databaseId , metaData} ) {
                     name={data.name} 
                     index={index} 
                     handleDelete={handleDeleteTask} 
-                    setBoardData={setBoardData}/>
+                    setBoardData={setBoardData}
+                    handleMountEditTask={handleMountEditTask} //mounts the task editor to edit the current task
+                    />
                     <CapsuleButton text={'Add a Task'} handler={() => {
                       setTaskEditorActive(!taskEditorActive)
                     }}/>
@@ -150,6 +162,9 @@ function KanbanStyleBoard( { data , databaseId , metaData} ) {
               boardMetaData={boardMetaData}
               setIdTrack={setIdTrack}
               idTrack={idTrack}
+              handleEditTask={handleEditTask}
+              taskEditorData={taskEditorData}
+              setTaskEditorData={setTaskEditorData}
               />
              } 
           </div>

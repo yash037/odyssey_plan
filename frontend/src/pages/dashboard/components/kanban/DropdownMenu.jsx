@@ -12,13 +12,13 @@ const popupTransform = {
 }
 
 const dropdownTransform  = {
-    vertical: 'bottom', 
-    horizontal: 'right',
+    vertical: 'top', 
+    horizontal: 'left',
 }
 
 const dropdownAnchor = {
-    vertical: 'top', 
-    horizontal: 'right',
+    vertical: 'bottom', 
+    horizontal: 'center',
 }
 
 export default function DropdownMenu({ popUp , icon , children , setAnchorEl , anchorEl}) {
@@ -45,8 +45,8 @@ export default function DropdownMenu({ popUp , icon , children , setAnchorEl , a
           id="dropdown-menu"
           anchorEl={anchorEl}
           keepMounted
-          anchorOrigin={popUp == true ? popupAnchor : dropdownAnchor}
-          transformOrigin={popUp == true ? popupTransform : dropdownTransform}
+          anchorOrigin={popUp ? popupAnchor : dropdownAnchor}
+          transformOrigin={popUp ? popupTransform : dropdownTransform}
           open={Boolean(anchorEl)}
           onClose={handleClose}
         >

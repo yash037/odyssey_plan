@@ -13,18 +13,20 @@ import Calendar from './CalanderStyled'
 import { useEffect, useState } from "react";
 import LabelIcon from '@mui/icons-material/Label';
 import AddLabelModal from "./AddLabelModal";
+import { v4 as uuid } from "uuid";
 //done for modularity
 const priorityData = ['procrastinate' , 'low' , 'medium' , 'high']; //array of priority
 const kanbanData = ['Backlog' , 'Doing' , 'Review' , 'Done']; // array of kanban 
 const colors = [ 'red' , 'yellow' , 'blue' , 'green' , 'purple' , 'pink']; //array of colors
 
 
-export default function TaskEditor({ setTaskEditorActive,setBoardData, boardData, setIdTrack, idTrack , setBoardMetaData , boardMetaData}){
+export default function TaskEditor({ setTaskEditorActive,setBoardData, boardData, setIdTrack, idTrack , setBoardMetaData , boardMetaData , handleEditTask ,taskEditorData , setTaskEditorData}){
+    console.log(taskEditorData)
   const [date , setDate ] = useState(null);
-  const [ priority , setPriority ] = useState(0);
+  const [ priority , setPriority ] = useState(taskEditorData?taskEditorData.priorityData:0);
   const [ kanban , setKanban ] = useState(0);
-  const [ title , setTitle ] = useState('');
-  const [text , setText ] = useState('');
+  const [ title , setTitle ] = useState(taskEditorData?taskEditorData.name:'');
+  const [text , setText ] = useState(taskEditorData?taskEditorData.description:'');
   const [ label , setLabel ] = useState([]);
   const [anchorCal, setAnchorCal] = useState(null);
   const [anchorFlag , setAnchorFlag] = useState(null);
@@ -38,22 +40,52 @@ export default function TaskEditor({ setTaskEditorActive,setBoardData, boardData
         )
     }
     ,[])
-    console.log(label)
+    useEffect(
+        () => {
+            //set all the data here
+        }
+        , [taskEditorData]
+    )
   const handleMenuItemClick = ( stateSetter , anchorSetter , index ) => {
     stateSetter(index);
     anchorSetter(null);
   }
   const handleCreateClick = () => {
-    boardData[kanban].data = [...boardData[kanban].data , { 
-        id : idTrack.toString() ,
-        name : title ,
-        description : text,
-        date : date,
-        priority : priorityData[priority],
-        label : label
-        //insert labels here
-    }]
-    console.log(boardData)
+    if(taskEditorData == null){
+        boardData[kanban].data = [...boardData[kanban].data , { 
+            id : uuid() ,
+            name : title ,
+            description : text,
+            date : date,
+            priority : priorityData[priority],
+            priorityIndex : priority,
+            label : label
+            //insert labels here
+        }]
+    }
+    else{
+        let elementIndex = 0 
+        let boardIndex = 0;
+        for( let i = 0 ; i < boardData.length ; i++ ){
+            for( let j = 0 ; j < boardData[i].data.length ; j++){
+                if(boardData[i].data[j].id == taskEditorData.id){
+                    boardIndex = i
+                    elementIndex = j
+                }
+            }
+        }
+        boardData[boardIndex].data[elementIndex] = { 
+            id : taskEditorData.id ,
+            name : title ,
+            description : text,
+            date : date,
+            priority : priorityData[priority],
+            priorityIndex : priority,
+            boardIndex : kanban ,
+            label : label
+        }
+    }
+    
     setBoardData([...boardData])
     setDate()
     setPriority(0)
@@ -65,10 +97,9 @@ export default function TaskEditor({ setTaskEditorActive,setBoardData, boardData
   }
   const handleClose = () => {
     setTaskEditorActive(false)
+    setTaskEditorData(null)
   }
   const handleLabelClick = ( labelData ) => {
-    //label would contain id , data , emoji
-    console.log(labelData)
     for ( let i = 0 ; i < label.length ; i++ ){
         if( label[i].id == labelData.id ){
             return;            
@@ -80,15 +111,15 @@ export default function TaskEditor({ setTaskEditorActive,setBoardData, boardData
   }
   return (
     
-        <Card  sx={{height:'55vh', width: '30vw' , position : 'absolute' , left : '0' , top : '0'}}>
+        <Card  sx={{height:'45vh', width: '30vw' , position : 'absolute' , left : '0' , top : '0'}}>
             <CardHeader
                 subheader={<Input placeholder={'Type Here'} setInput={setTitle} value={title}></Input>}
                 action = {<IconButton onClick={handleClose}><CloseIcon></CloseIcon></IconButton>}
             />
             <CardContent>
-                <div className="text-editor-title">
+                {/* <div className="text-editor-title">
                     In    <div style={{display:'inline' , margin:'0 10%'}}><CapsuleButton> Something</CapsuleButton> </div>       For    <div style={{display:'inline' , marginLeft:'10%'}}><CapsuleButton> Something</CapsuleButton> </div>
-                </div>
+                </div> */}
                 <div>
                     <TextArea setText={setText} value={text}></TextArea>
                 </div>
