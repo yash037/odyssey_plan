@@ -38,36 +38,39 @@ export default function RecursiveSidebarMultiple({
     const [ expandedKeys , setExpandedKeys ] = useState([])
     const [ name , setName ] = useState('')
     const [ files , setFiles ] = useState([])
+    console.log(files)
     const sendData = async ( personalSpace , workSpaceId) => {
-      console.log('sendData')
-try{
- const recur = ( data ) => {
-     if(data == null){
-         return
-     }
-     data.forEach(
-         ( item ) => {
-             item.title = ""
-             recur(data.children)
-         }
-     )
- }
- recur(personalSpace)
- console.log(personalSpace)
- const payload = stringify(personalSpace)
- const res =  await send.post(backendURL + '/data/saveFolder' , {
-     data : {
-         workspaceId : workSpaceId,
-         content : payload
-     }    
- })
- socket.emit('change-folderstructure' , workSpaceId)
- console.log(res)
-}
-catch(e){
- console.log(e)
-}   
-}
+        try{
+          const recur = ( data ) => {
+              if(data == null){
+                  return
+              }
+              data.forEach(
+                  ( item ) => {
+                      item.title = ""
+                      recur(data.children)
+                  }
+              )
+          }
+          recur(personalSpace)
+
+          const payload = stringify(personalSpace)
+          const res =  await send.post(backendURL + '/data/saveFolder' , {
+              data : {
+                  workspaceId : workSpaceId,
+                  content : payload
+              }    
+          })
+          if(res.status == 200){
+            socket.emit('change-folderstructure' , workSpaceId)
+            
+          }
+        
+        }
+        catch(e){
+          console.log(e)
+        }   
+        }
   useEffect(() => {
     const getData = async (workSpaceId) => {
         const res = await   send.get(backendURL + '/data/getFolder' , {
@@ -75,7 +78,9 @@ catch(e){
                 workspaceId : workSpaceId
             }
         })
+        
         if(res.status == 200){
+          
             setFiles(parse(res.data.data.folderStructure))
         }
         if(res.status == 201){
@@ -97,19 +102,22 @@ catch(e){
               workspaceId : workSpaceId
           }
       })
+     
       if(res.status == 200){
-          setFiles(parse(res.data.data.folderStructure))
+        
+          setFiles([...parse(res.data.data.folderStructure)])
       }
       if(res.status == 201){
           setFiles([])
       }  
+    
       
   }
     const handleLoadFileStructure = (workpaceId) => {
-      console.log('load this',workSpaceId)
       getData(workSpaceId)
+      setKeyTracker(keyTracker + 1)
     }
-    console.log('joining')
+   
     socket.emit('join-folderstructure' , workSpaceId)
     socket.on('load-filestructure' , handleLoadFileStructure)
 
@@ -298,6 +306,7 @@ catch(e){
       removefrom.splice(removeindex, 1);
     }
     setFiles(data);
+    sendData(data , workSpaceId)
   };
   const onExpand = (newKeys , { expanded , node } ) => {
     setExpandedKeys(newKeys)
@@ -387,9 +396,7 @@ catch(e){
         name : 'Untitled',
         children : [
             
-        ],
-       
-        
+        ],    
     }
     ] , workSpaceId)
    
@@ -397,7 +404,7 @@ catch(e){
   }
   const renderTreeNodes = (data) => {
     let nodeArr = data.map((item) => {
-     
+      console.log(item.name)
       if(item.emoji == null){
         item.emoji = (
           provideIcon({ type :item.type , filetype :item.filetype})
@@ -408,17 +415,21 @@ catch(e){
             onSelect(item)
           }}
           className="node"
-          >
+          >  
               <Icon 
-                key={item.key}
+                key={item.emoji }
                 id={item.key} 
                 emoji={item.emoji}
                 setFiles={setFiles}
+                sendData={sendData}
+                workspaceId={workSpaceId}
               />
               <RenamableName
-              key={item.key}
+              key={item.key }
               name={item.name}
               setFiles={setFiles}
+              sendData={sendData}
+              workspaceId={workSpaceId}
               id={item.key}
             />
           </div>
@@ -503,6 +514,7 @@ catch(e){
         showIcon={true}
         treeData={files}
         autoExpandParent={true}
+        key={keyTracker}
         >
           {renderTreeNodes(files)}
         </Tree>

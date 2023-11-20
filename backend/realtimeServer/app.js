@@ -59,27 +59,14 @@ io.on('connection' , (socket) => {
         await doc.save()
         socket.broadcast.to(documentId).emit( 'member-left' , memberId.substr( 1 , memberId.length - 1 ));
     })
-
-    socket.on( 'cursor-movement' , ( documentId , memberId , selection) => {
-         console.log(memberId.substr( 1 , memberId.length - 1 ) + ' moved')
-        socket.to(documentId).emit( 'cursor-movement' , memberId.substr( 1 , memberId.length - 1 ) , selection );
+    socket.on('join-folderstructure' , (workspaceId) => {
+        socket.join(workspaceId)
+        console.log('joined' , workspaceId) 
     })
-
-    socket.on( 'join-room' , async ( workSpaceId ) => { //every time the file explorer is loaded in frontend this will be emmitted
-        var workspace = await Workspace.findOne({Id : workSpaceId})
-        if( workspace == null ){
-             await Workspace.create({Id : workSpaceId}) 
-        }
-        workspace = await Workspace.findOne({Id : workSpaceId})
-        socket.join(workSpaceId)
-        socket.to(workSpaceId).emit('load-file-explorer' , workspace)
-    })
-
-    socket.on( 'update-workspace' , async (workSpaceId , workSpaceData) => { //update the workspace and tell everyone to update it too
-        var workspace = await Workspace.findOne({Id : workSpaceId})
-        workspace.folderStructure = workSpaceData
-        await workspace.save()
-        socket.to(workSpaceId).emit('load-file-explorer' , workspace) 
+    var count = 0
+    socket.on('change-folderstructure' , (workspaceId) => {
+        console.log('changed',workspaceId , count++)
+        socket.to(workspaceId).emit('load-filestructure' , workspaceId)
     })
 }) 
 
