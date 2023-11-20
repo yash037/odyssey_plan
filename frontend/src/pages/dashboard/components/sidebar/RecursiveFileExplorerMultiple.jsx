@@ -14,27 +14,113 @@ import ViewKanbanIcon from '@mui/icons-material/ViewKanban';
 import EditCalendarIcon from '@mui/icons-material/EditCalendar';
 
 import StickyNote2Icon from '@mui/icons-material/StickyNote2';
-import { frontendURL } from "../../../../global/request";
+import { backendURL, frontendURL, send } from "../../../../global/request";
 import { v4 as uuid} from "uuid";
 import CapsuleButton from "../kanban/CapsuleButton";
 import Icon from "./IconProvider";
 import Search from "antd/es/input/Search";
+import { parse, stringify } from "flatted";
 
 const { TreeNode } = Tree;
+
+
+
 export default function RecursiveSidebarMultiple({ 
-      setFiles ,
       setContent , 
-      name,
-      files,
       workSpaceId,
-      socket
+      socket ,
+
 }){
     const [ currpos , setCurrpos ] = useState('0');
     const [ keyTracker , setKeyTracker ] = useState(100);
     const [ disabled , setDisabled ] = useState(true)
     const [ text , setText ] = useState('')
     const [ expandedKeys , setExpandedKeys ] = useState([])
-    console.log(files)
+    const [ name , setName ] = useState('')
+    const [ files , setFiles ] = useState([])
+    const sendData = async ( personalSpace , workSpaceId) => {
+      console.log('sendData')
+try{
+ const recur = ( data ) => {
+     if(data == null){
+         return
+     }
+     data.forEach(
+         ( item ) => {
+             item.title = ""
+             recur(data.children)
+         }
+     )
+ }
+ recur(personalSpace)
+ console.log(personalSpace)
+ const payload = stringify(personalSpace)
+ const res =  await send.post(backendURL + '/data/saveFolder' , {
+     data : {
+         workspaceId : workSpaceId,
+         content : payload
+     }    
+ })
+ socket.emit('change-folderstructure' , workSpaceId)
+ console.log(res)
+}
+catch(e){
+ console.log(e)
+}   
+}
+  useEffect(() => {
+    const getData = async (workSpaceId) => {
+        const res = await   send.get(backendURL + '/data/getFolder' , {
+            params : {
+                workspaceId : workSpaceId
+            }
+        })
+        if(res.status == 200){
+            setFiles(parse(res.data.data.folderStructure))
+        }
+        if(res.status == 201){
+            setFiles([])
+        }  
+    }
+    getData(workSpaceId)
+}
+,[workSpaceId])
+
+  useEffect(() => {
+    //all i need to do with socket is telling other guys to fetch data when i have send it to database
+    if(socket == null){
+      return
+    }
+    const getData = async (workSpaceId) => {
+      const res = await   send.get(backendURL + '/data/getFolder' , {
+          params : {
+              workspaceId : workSpaceId
+          }
+      })
+      if(res.status == 200){
+          setFiles(parse(res.data.data.folderStructure))
+      }
+      if(res.status == 201){
+          setFiles([])
+      }  
+      
+  }
+    const handleLoadFileStructure = (workpaceId) => {
+      console.log('load this',workSpaceId)
+      getData(workSpaceId)
+    }
+    console.log('joining')
+    socket.emit('join-folderstructure' , workSpaceId)
+    socket.on('load-filestructure' , handleLoadFileStructure)
+
+    return (
+      () => {
+        socket.off('load-filestructure' , handleLoadFileStructure)
+        
+      })
+     
+  },[socket , workSpaceId])
+
     const loop = (data, key, callback) => {
         for (let i = 0; i < data.length; i++) {
           if (data[i].key === key) {
@@ -49,24 +135,25 @@ export default function RecursiveSidebarMultiple({
 
         const data = [ ...files ]
         if(currpos == '0') {
-            setFiles( [...data , {
-              key : uuid(),
+          const id = uuid()
+            setFiles([ ...data ,  {
+
+              key : id,
               name : 'Untitled',
               type : 'file',
               filetype : type,
               databaseId : id
               
           }])
-            setFiles(
-              [...data , {
-                key : uuid(),
-                name : 'Untitled',
-                type : 'file',
-                filetype : type,
-                databaseId : id
-                
-            }]
-            )
+            sendData([ ...data ,  {
+
+              key : id,
+              name : 'Untitled',
+              type : 'file',
+              filetype : type,
+              databaseId : id
+              
+          }], workSpaceId)
             setKeyTracker( keyTracker + 1 )
         }
         else {
@@ -84,31 +171,32 @@ export default function RecursiveSidebarMultiple({
               } )
             } )
             setFiles(data)
+            sendData(data , workSpaceId)
             setKeyTracker(keyTracker + 1)
         }
+        
   }
     const handleAddFolder = ( ) => {
 
         const data = [ ...files ]
         if(currpos == '0') {
+          const id = uuid()
             setFiles( [...data , {
-              key : uuid(),
+              key : id,
               name : 'Untitled',
               type : 'folder',
               children : [
                   
-              ],
-
-              
+              ], 
           }])
-          setFiles( [...data , {
-            key : uuid(),
+          sendData([ ...data ,  {
+
+            key : id,
             name : 'Untitled',
             type : 'folder',
-            children : [
-                
-            ],
-        }])
+            databaseId : id
+            
+        }], workSpaceId)
             setKeyTracker( keyTracker + 1 )
         }
         else {
@@ -124,9 +212,11 @@ export default function RecursiveSidebarMultiple({
               } )
             } )
             setFiles(data)
-            setFiles(data)
+            sendData(data , workSpaceId)
             setKeyTracker(keyTracker + 1)
+            
         }
+       
     }
   const onSelect = (node) => {
     
@@ -135,7 +225,7 @@ export default function RecursiveSidebarMultiple({
       setContent({type : node.filetype, databaseId : node.databaseId})
       setDisabled(true)
       if(node.filetype){
-        console.log(node.filetype)
+       
         if( node.filetype == 'doc' || node.filetype == 'calendar'){
           window.open(frontendURL + `/${node.filetype}/${node.key}` , '_blank')
         }
@@ -287,27 +377,25 @@ export default function RecursiveSidebarMultiple({
           
       }
       ]
-     
+   
     )
-    setFiles(
-      [
-        ...files ,
-        {
-          key : uuid(),
-          type : 'folder',
-          name : 'Untitled',
-          children : [
-              
-          ],
-         
-          
-      }
-      ]
-    )
+    sendData([
+      ...files ,
+      {
+        key : uuid(),
+        type : 'folder',
+        name : 'Untitled',
+        children : [
+            
+        ],
+       
+        
+    }
+    ] , workSpaceId)
+   
     setKeyTracker(keyTracker + 1)
   }
   const renderTreeNodes = (data) => {
-     console.log(data)
     let nodeArr = data.map((item) => {
      
       if(item.emoji == null){
@@ -359,7 +447,7 @@ export default function RecursiveSidebarMultiple({
               if( name == '' ){
                 return
               }
-              console.log('found')
+              
               setExpandedKeys(
                 (expandedKeys) => (
                   [

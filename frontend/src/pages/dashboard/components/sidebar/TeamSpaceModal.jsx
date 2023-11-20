@@ -7,16 +7,18 @@ import { backendURL, send } from "../../../../global/request";
 import EmojiPicker from "emoji-picker-react";
 import { v4 as uuid } from "uuid";
 
-export default function TeamspaceModal({setWorkSpacesIdArray , setWorkSpaces}){
+export default function TeamspaceModal({setWorkSpacesIdArray }){
     const [ open , setOpen ] = useState(false)
     const [ name , setName ] = useState('')
     const [ emojiOpen , setEmojiOpen ] = useState(false)
     const [ emoji , setEmoji ] = useState('🥰')
+    const [ workspaceCode , setWorkspaceCode ] = useState('')
     const handleModalClose = () => {
         setOpen(false)
         setName('')
         setEmojiOpen(false)
         setEmoji('🥰')
+        setWorkspaceCode(false)
     }
     const handleModalOpen = () => {
         setOpen(true)
@@ -37,12 +39,33 @@ export default function TeamspaceModal({setWorkSpacesIdArray , setWorkSpaces}){
         console.log(res)
         if( res.status == 200 ){
             setWorkSpacesIdArray((idArray) => ([...idArray , res.data.workspaceId]))
-            setWorkSpaces((data)=>({...data , [ res.data.workSpaceId ] : { name : name , folderStructure : '[[]]' , icon : emoji } }))
         }
+        setOpen(false)
     }
     const handleEmojiClick = (e) => {
         setEmojiOpen(false)
         setEmoji(e.emoji)
+    }
+    const handleSubmitByCode = async () => {
+        try{
+            const res = await send.post( backendURL + '/data/addWorkspace' , {
+                data : {
+                    workspaceId : workspaceCode 
+                }
+            } )
+            console.log(res)
+            if(res.status == 200){
+                setWorkSpacesIdArray((data) => ([...data , workspaceCode]))
+                handleModalClose()  
+            }
+        }
+        catch(e){
+            console.log(e)
+        }
+       
+    }   
+    const handleCodeChange = (e) => {
+        setWorkspaceCode(e.target.value)
     }
     return(
         <>
@@ -64,8 +87,13 @@ export default function TeamspaceModal({setWorkSpacesIdArray , setWorkSpaces}){
                         <input type="text" value={name} onChange={handleChangeName} placeholder="enter name" style={{width : '100%' , placeContent : 'center'}}></input>
                         <button onClick={handleSubmit}>Submit</button>
                     </CardContent>
-                    
+                    <CardContent>
+                        <input type="text" value={workspaceCode} onChange={handleCodeChange} placeholder="enter the code"></input>
+                        <br></br>
+                        <button onClick={handleSubmitByCode}>Submit with particular Code</button>
+                    </CardContent>
                 </Card>
+                
             </Modal>
         </>
         
