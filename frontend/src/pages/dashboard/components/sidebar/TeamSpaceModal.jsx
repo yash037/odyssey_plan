@@ -69,7 +69,7 @@ export default function TeamspaceModal({setWorkSpacesIdArray }){
     }
     return(
         <>
-            <IconButton onClick={handleModalOpen}>
+            <IconButton onClick={handleModalOpen} sx={{color : 'white'}}>
                 <AddIcon/>
             </IconButton>
             <Modal

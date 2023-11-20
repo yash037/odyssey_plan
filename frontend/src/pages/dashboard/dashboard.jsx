@@ -11,6 +11,7 @@ import CapsuleButton from './components/kanban/CapsuleButton';
 import { Divider } from '@mui/material';
 import io from 'socket.io-client'
 import TeamspaceModal from './components/sidebar/TeamSpaceModal';
+import { purple } from '@mui/material/colors';
 
 // the plan is everytime a component is actually mounted 
 // 
@@ -19,6 +20,8 @@ export default function DashBoard(){
     const [ personalSpace , setPersonalSpace ] = useState([]) //personal space is at index 0
     const [ workSpacesIdArray , setWorkSpacesIdArray ] = useState([])
     const [ socket , setSocket ] = useState(null)
+    const [ showPrivate , setShowPrivate ] = useState(true)
+    const [ showPublic , setShowPublic ] = useState(true)
     const view = content.type
     const databaseId = content.databaseId  
     console.log(  workSpacesIdArray)
@@ -138,46 +141,59 @@ export default function DashBoard(){
                     Settings
                 </CapsuleButton>
                 <div>
-                    <div>
-                        <span>
-                            TeamSpaces
+                    <div className='team-space-div'>
+                        <span onClick={()=>{setShowPublic(!showPublic)}}>
+                            <p>
+                                Teamspaces
+                            </p>
                         </span>
-                        <TeamspaceModal 
-                        setWorkSpacesIdArray={setWorkSpacesIdArray}
-                        ></TeamspaceModal>
+                        <span>
+                            <TeamspaceModal 
+                            setWorkSpacesIdArray={setWorkSpacesIdArray}
+                            ></TeamspaceModal>
+                        </span>
+                        
                     </div>
                     
                     <Divider></Divider>
+                    {showPublic && <div>
                     {
                         socket==null?'':workSpacesIdArray.map((workspaceId , index) => {
                             return(
-                            <RecursiveSidebarMultiple 
-                            key={workspaceId} 
-                            workSpaceId={workspaceId} 
-                            socket={socket} 
-                            setContent={setContent}
-                            >
-
-                            </RecursiveSidebarMultiple>
+                            <div className='remote-sidebar-div' key={workspaceId}>
+                                <RecursiveSidebarMultiple 
+                                workSpaceId={workspaceId} 
+                                socket={socket} 
+                                setContent={setContent}
+                                />
+                            </div>
+                            
                             )
                         })
                     }
+                    </div>
+                    }
                 </div>
-                <div>
-                    <span>
-                        Private
+                <div className='team-space-div'>
+                    <span onClick={()=>{setShowPrivate(!showPrivate)}}>
+                        <p>
+                            Private
+                        </p>
+                        
                     </span>
                     <Divider></Divider>
+                  
+                </div>
+                {showPrivate&&<div>
                     <RecursiveSidebar 
-                    setFiles={setPersonalSpace}
-                    files={personalSpace}
-                    index={0} 
-                    setContent={setContent}
-                    name={'personal space'}
+                        setFiles={setPersonalSpace}
+                        files={personalSpace}
+                        index={0} 
+                        setContent={setContent}
+                        name={'personal space'}
                     ></RecursiveSidebar>
                 </div>
-                
-   
+                }
             </div>  
             <div className='content-div'>
                 <Content 

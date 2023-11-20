@@ -5,7 +5,7 @@ import { Tree } from 'antd';
 import "rc-tree/assets/index.css"
 import '../css/Sidebar.css'
 
-import { IconButton } from "@mui/material";
+import { IconButton, MenuItem, Typography } from "@mui/material";
 import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder';
 import PostAddIcon from '@mui/icons-material/PostAdd';
 import RenamableName from "./Renamable";
@@ -20,6 +20,14 @@ import CapsuleButton from "../kanban/CapsuleButton";
 import Icon from "./IconProvider";
 import Search from "antd/es/input/Search";
 
+import DropdownMenu from '../kanban/DropdownMenu'
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import DeleteIcon from '@mui/icons-material/Delete';
+import AddIcon from '@mui/icons-material/Add';
+
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
+
 const { TreeNode } = Tree;
 export default function RecursiveSidebar({ 
       setFiles ,
@@ -32,7 +40,8 @@ export default function RecursiveSidebar({
     const [ disabled , setDisabled ] = useState(true)
     const [ text , setText ] = useState('')
     const [ expandedKeys , setExpandedKeys ] = useState([])
-    
+    const [ anchor , setAnchor ] = useState(null)
+    const [ close , setClose ] = useState(false)
     const loop = (data, key, callback) => {
         for (let i = 0; i < data.length; i++) {
           if (data[i].key === key) {
@@ -43,6 +52,14 @@ export default function RecursiveSidebar({
           }
         }
     };
+    const handleDelete = () => {
+      const data = [...files]
+      loop(data , currpos , (location , i , data) =>{
+        console.log(data[i])
+        data.splice(i , 1)
+      })
+      setFiles([...data])
+    }
     const handleAddFile = ( type , id) => {
 
         const data = [ ...files ]
@@ -313,6 +330,7 @@ export default function RecursiveSidebar({
           provideIcon({ type :item.type , filetype :item.filetype})
         )
       }
+        console.log(item)
         item.title = (
           <div onClick={()=>{
             onSelect(item)
@@ -331,6 +349,90 @@ export default function RecursiveSidebar({
               setFiles={setFiles}
               id={item.key}
             />
+            <span style={{position : 'absolute' , right : '0'}}>
+            <DropdownMenu icon={<MoreHorizIcon/>} popUp={false} anchorEl={anchor} setAnchorEl={setAnchor}>
+                 {item.type == 'folder' ?(
+                  <>
+                  <MenuItem>
+                    <IconButton onClick={
+                      () => {
+                        handleAddFolder() 
+                        setAnchor(null)
+                      }}>
+                      <CreateNewFolderIcon/>
+                      <Typography>
+                        Add Folder
+                      </Typography> 
+                    </IconButton>
+                  </MenuItem>
+                  <MenuItem>
+                    <IconButton onClick={
+                      () => {
+                        handleAddNote() 
+                        setAnchor(null)
+                      }}>
+                        <StickyNote2Icon/>
+                        <Typography>
+                          Add Note
+                        </Typography>
+                    </IconButton>
+                  </MenuItem>
+                  <MenuItem>  
+                    <IconButton onClick={
+                      () => {
+                        handleAddDoc() 
+                        setAnchor(null)
+                      }}>
+                        <PostAddIcon></PostAddIcon>
+                        <Typography>
+                          Add Doc
+                        </Typography>
+                    </IconButton>
+                  </MenuItem>
+                  <MenuItem>
+                    <IconButton onClick={
+                      () => {
+                        handleAddCalendar() 
+                        setAnchor(null)
+                      }}>
+                        <EditCalendarIcon/>
+                        <Typography>
+                          Add Calendar
+                        </Typography>
+                    </IconButton>
+                  </MenuItem>
+                  <MenuItem>
+                    <IconButton onClick={
+                      () => {
+                        handleAddBoard() 
+                        setAnchor(null)
+                      }}>
+                        <ViewKanbanIcon/>
+                        <Typography>
+                          Add a Board
+                        </Typography>
+                    </IconButton>
+                  </MenuItem>
+                  <MenuItem>
+                    <IconButton onClick={() => {
+                      handleDelete()
+                      setAnchor(null)
+                    }}>
+                      <DeleteIcon/>
+                      <Typography>
+                        Delete
+                      </Typography>
+                    </IconButton>
+                     
+                  </MenuItem>
+                </>
+                 ) 
+                  : ''  
+                }
+                
+                
+            </DropdownMenu>
+            </span>
           </div>
           
         )
@@ -380,30 +482,33 @@ export default function RecursiveSidebar({
   }
   return (
     <div>
-      <Search 
-        value={text} 
-        onChange={handleSearchChange}
-        onBlur={handleBlur}
-      />
-        <div className="file-explorer-buttons">
+      
+      <div className="file-explorer-buttons" style={{display : 'flex' , alignItems : 'center'}}>
+      
+            
            
-            <IconButton onClick={ handleAddFolder } sx={{color : 'white'}} disabled={disabled}>
-                <CreateNewFolderIcon/>
+           <span>
+              <p>{name}</p>
+           </span>
+           <span>
+           <IconButton  onClick={
+            () => {
+              setClose(!close)
+            }
+           }
+           sx={{  right : '0' , color:'white'}}
+           >
+              {close ? <KeyboardArrowDownIcon/> : <KeyboardArrowRightIcon/>}
             </IconButton>
-            <IconButton onClick={ handleAddDoc } sx={{color : 'white'}} disabled={disabled}>
-                <PostAddIcon/>
+           </span>
+           <span>
+            <IconButton sx={{  right : '0' , color:'white'}} onClick={handleRootAddClick}>
+              <AddIcon/>
             </IconButton>
-            <IconButton onClick={ handleAddCalendar} sx={{color : 'white'}} disabled={disabled}>
-                <EditCalendarIcon/>
-            </IconButton>
-            <IconButton onClick={ handleAddBoard } sx={{color : 'white'}} disabled={disabled}>
-                <ViewKanbanIcon/>
-            </IconButton>
-            <IconButton onClick={ handleAddNote } sx={{color : 'white'}} disabled={disabled}>
-                <StickyNote2Icon/>
-            </IconButton>
+           </span>
+          
         </div>
-        <Tree
+        {close && <Tree
         className="draggable-tree"
         draggable
         blockNode
@@ -416,9 +521,8 @@ export default function RecursiveSidebar({
         >
           {renderTreeNodes(files)}
         </Tree>
-        <CapsuleButton handler={handleRootAddClick}>
-          Create Add
-        </CapsuleButton>
+        }
+        
     </div>
     
   );
