@@ -175,12 +175,7 @@ export default function DashBoard(){
                     }
                 </div>
                 <div className='team-space-div'>
-                    <span onClick={()=>{setShowPrivate(!showPrivate)}}>
-                        <p>
-                            Private
-                        </p>
-                        
-                    </span>
+                    
                     <Divider></Divider>
                   
                 </div>
