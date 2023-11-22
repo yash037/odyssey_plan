@@ -21,8 +21,7 @@ const colors = [ 'red' , 'yellow' , 'blue' , 'green' , 'purple' , 'pink']; //arr
 
 
 export default function TaskEditor({ setTaskEditorActive,setBoardData, boardData, setIdTrack, idTrack , setBoardMetaData , boardMetaData , handleEditTask ,taskEditorData , setTaskEditorData , kanbanIndex = 0}){
-    console.log(taskEditorData)
-  const [date , setDate ] = useState(taskEditorData?taskEditorData.data:null);
+  const [ date , setDate ] = useState(taskEditorData?taskEditorData.data:null);
   const [ priority , setPriority ] = useState(taskEditorData?taskEditorData.priorityData:0);
   const [ kanban , setKanban ] = useState(kanbanIndex);
   const [ title , setTitle ] = useState(taskEditorData?taskEditorData.name:'');

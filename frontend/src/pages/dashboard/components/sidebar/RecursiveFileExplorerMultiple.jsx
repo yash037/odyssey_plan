@@ -14,34 +14,132 @@ import ViewKanbanIcon from '@mui/icons-material/ViewKanban';
 import EditCalendarIcon from '@mui/icons-material/EditCalendar';
 
 import StickyNote2Icon from '@mui/icons-material/StickyNote2';
-import { frontendURL } from "../../../../global/request";
+import { backendURL, frontendURL, send } from "../../../../global/request";
 import { v4 as uuid} from "uuid";
 import CapsuleButton from "../kanban/CapsuleButton";
 import Icon from "./IconProvider";
 import Search from "antd/es/input/Search";
-
-import DropdownMenu from '../kanban/DropdownMenu'
+import { parse, stringify } from "flatted";
+import DropdownMenu from "../kanban/DropdownMenu";
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
-
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 
 const { TreeNode } = Tree;
-export default function RecursiveSidebar({ 
-      setFiles ,
+
+
+
+export default function RecursiveSidebarMultiple({ 
       setContent , 
-      name,
-      files
+      workSpaceId,
+      socket ,
+
 }){
     const [ currpos , setCurrpos ] = useState('0');
     const [ keyTracker , setKeyTracker ] = useState(100);
     const [ disabled , setDisabled ] = useState(true)
     const [ text , setText ] = useState('')
     const [ expandedKeys , setExpandedKeys ] = useState([])
+    const [ name , setName ] = useState('')
+    const [ files , setFiles ] = useState([])
     const [ anchor , setAnchor ] = useState(null)
+    const [ icon , setIcon ] = useState('')
     const [ close , setClose ] = useState(false)
+    console.log(files)
+    const sendData = async ( personalSpace , workSpaceId) => {
+        try{
+          const recur = ( data ) => {
+              if(data == null){
+                  return
+              }
+              data.forEach(
+                  ( item ) => {
+                      item.title = ""
+                      recur(data.children)
+                  }
+              )
+          }
+          recur(personalSpace)
+
+          const payload = stringify(personalSpace)
+          const res =  await send.post(backendURL + '/data/saveFolder' , {
+              data : {
+                  workspaceId : workSpaceId,
+                  content : payload
+              }    
+          })
+          if(res.status == 200){
+            socket.emit('change-folderstructure' , workSpaceId)
+            
+          }
+        
+        }
+        catch(e){
+          console.log(e)
+        }   
+        }
+  useEffect(() => {
+    const getData = async (workSpaceId) => {
+        const res = await   send.get(backendURL + '/data/getFolder' , {
+            params : {
+                workspaceId : workSpaceId
+            }
+        })
+        
+        if(res.status == 200){
+          console.log(res)
+            setIcon(res.data.data.icon)
+            setName(res.data.data.name)
+            setFiles(parse(res.data.data.folderStructure))
+        }
+        if(res.status == 201){
+            setFiles([])
+        }  
+    }
+    getData(workSpaceId)
+}
+,[workSpaceId])
+
+  useEffect(() => {
+    //all i need to do with socket is telling other guys to fetch data when i have send it to database
+    if(socket == null){
+      return
+    }
+    const getData = async (workSpaceId) => {
+      const res = await   send.get(backendURL + '/data/getFolder' , {
+          params : {
+              workspaceId : workSpaceId
+          }
+      })
+     
+      if(res.status == 200){
+        
+          setFiles([...parse(res.data.data.folderStructure)])
+      }
+      if(res.status == 201){
+          setFiles([])
+      }  
+    
+      
+  }
+    const handleLoadFileStructure = (workpaceId) => {
+      getData(workSpaceId)
+      setKeyTracker(keyTracker + 1)
+    }
+   
+    socket.emit('join-folderstructure' , workSpaceId)
+    socket.on('load-filestructure' , handleLoadFileStructure)
+
+    return (
+      () => {
+        socket.off('load-filestructure' , handleLoadFileStructure)
+        
+      })
+     
+  },[socket , workSpaceId])
+
     const loop = (data, key, callback) => {
         for (let i = 0; i < data.length; i++) {
           if (data[i].key === key) {
@@ -52,36 +150,29 @@ export default function RecursiveSidebar({
           }
         }
     };
-    const handleDelete = () => {
-      const data = [...files]
-      loop(data , currpos , (location , i , data) =>{
-        console.log(data[i])
-        data.splice(i , 1)
-      })
-      setFiles([...data])
-    }
     const handleAddFile = ( type , id) => {
 
         const data = [ ...files ]
         if(currpos == '0') {
-            setFiles( [...data , {
-              key : uuid(),
+          const id = uuid()
+            setFiles([ ...data ,  {
+
+              key : id,
               name : 'Untitled',
               type : 'file',
               filetype : type,
               databaseId : id
               
           }])
-            setFiles(
-              [...data , {
-                key : uuid(),
-                name : 'Untitled',
-                type : 'file',
-                filetype : type,
-                databaseId : id
-                
-            }]
-            )
+            sendData([ ...data ,  {
+
+              key : id,
+              name : 'Untitled',
+              type : 'file',
+              filetype : type,
+              databaseId : id
+              
+          }], workSpaceId)
             setKeyTracker( keyTracker + 1 )
         }
         else {
@@ -99,31 +190,32 @@ export default function RecursiveSidebar({
               } )
             } )
             setFiles(data)
+            sendData(data , workSpaceId)
             setKeyTracker(keyTracker + 1)
         }
+        
   }
     const handleAddFolder = ( ) => {
 
         const data = [ ...files ]
         if(currpos == '0') {
+          const id = uuid()
             setFiles( [...data , {
-              key : uuid(),
+              key : id,
               name : 'Untitled',
               type : 'folder',
               children : [
                   
-              ],
-
-              
+              ], 
           }])
-          setFiles( [...data , {
-            key : uuid(),
+          sendData([ ...data ,  {
+
+            key : id,
             name : 'Untitled',
             type : 'folder',
-            children : [
-                
-            ],
-        }])
+            databaseId : id
+            
+        }], workSpaceId)
             setKeyTracker( keyTracker + 1 )
         }
         else {
@@ -139,9 +231,11 @@ export default function RecursiveSidebar({
               } )
             } )
             setFiles(data)
-            setFiles(data)
+            sendData(data , workSpaceId)
             setKeyTracker(keyTracker + 1)
+            
         }
+       
     }
   const onSelect = (node) => {
     
@@ -150,7 +244,7 @@ export default function RecursiveSidebar({
       setContent({type : node.filetype, databaseId : node.databaseId})
       setDisabled(true)
       if(node.filetype){
-        console.log(node.filetype)
+       
         if( node.filetype == 'doc' || node.filetype == 'calendar'){
           window.open(frontendURL + `/${node.filetype}/${node.key}` , '_blank')
         }
@@ -223,12 +317,22 @@ export default function RecursiveSidebar({
       removefrom.splice(removeindex, 1);
     }
     setFiles(data);
+    sendData(data , workSpaceId)
   };
   const onExpand = (newKeys , { expanded , node } ) => {
     setExpandedKeys(newKeys)
     if( expanded == true ){
         setCurrpos( node.key )
     }
+  }
+  const handleDelete = () => {
+    const data = [...files]
+    loop(data , currpos , (location , i , data) =>{
+      console.log(data[i])
+      data.splice(i , 1)
+    })
+    setFiles([...data])
+    sendData([...data] , workSpaceId)
   }
   const provideIcon = ( data ) => {
    
@@ -302,54 +406,53 @@ export default function RecursiveSidebar({
           
       }
       ]
-     
+   
     )
-    setFiles(
-      [
-        ...files ,
-        {
-          key : uuid(),
-          type : 'folder',
-          name : 'Untitled',
-          children : [
-              
-          ],
-         
-          
-      }
-      ]
-    )
+    sendData([
+      ...files ,
+      {
+        key : uuid(),
+        type : 'folder',
+        name : 'Untitled',
+        children : [
+            
+        ],    
+    }
+    ] , workSpaceId)
+   
     setKeyTracker(keyTracker + 1)
   }
   const renderTreeNodes = (data) => {
-     
     let nodeArr = data.map((item) => {
-     
+      console.log(item.name)
       if(item.emoji == null){
         item.emoji = (
           provideIcon({ type :item.type , filetype :item.filetype})
         )
       }
-        console.log(item)
         item.title = (
           <div onClick={()=>{
             onSelect(item)
           }}
           className="node"
-          >
+          >  
               <Icon 
-                key={item.key}
+                key={item.emoji }
                 id={item.key} 
                 emoji={item.emoji}
                 setFiles={setFiles}
+                sendData={sendData}
+                workspaceId={workSpaceId}
               />
               <RenamableName
-              key={item.key}
+              key={item.key }
               name={item.name}
               setFiles={setFiles}
+              sendData={sendData}
+              workspaceId={workSpaceId}
               id={item.key}
             />
-            <span style={{position : 'absolute' , right : '0'}}>
+             <span style={{position : 'absolute' , right : '0'}}>
             <DropdownMenu icon={<MoreHorizIcon/>} popUp={false} anchorEl={anchor} setAnchorEl={setAnchor}>
                  {item.type == 'folder' ?(
                   <>
@@ -414,7 +517,7 @@ export default function RecursiveSidebar({
                     </IconButton>
                   </MenuItem>
                   <MenuItem>
-                    <IconButton onClick={() => {
+                  <IconButton onClick={() => {
                       handleDelete()
                       setAnchor(null)
                     }}>
@@ -459,7 +562,7 @@ export default function RecursiveSidebar({
               if( name == '' ){
                 return
               }
-              console.log('found')
+              
               setExpandedKeys(
                 (expandedKeys) => (
                   [
@@ -483,21 +586,15 @@ export default function RecursiveSidebar({
   return (
     <div>
       
-      <div className="file-explorer-buttons" style={{display : 'flex' , alignItems : 'center'}}>
-      
-            
-           
+        <div className="file-explorer-buttons" style={{display : 'flex' , alignItems : 'center'}}>
+            <div style={{margin : '4px'}}> {icon} </div>
+           <p> {name} </p>
            <span>
-              <p>{name}</p>
-           </span>
-           <span>
-           <IconButton  onClick={
+           <IconButton sx={{  right : '0' , color:'white'}} onClick={
             () => {
               setClose(!close)
             }
-           }
-           sx={{  right : '0' , color:'white'}}
-           >
+           }>
               {close ? <KeyboardArrowDownIcon/> : <KeyboardArrowRightIcon/>}
             </IconButton>
            </span>
@@ -518,11 +615,11 @@ export default function RecursiveSidebar({
         showIcon={true}
         treeData={files}
         autoExpandParent={true}
+        key={keyTracker}
         >
           {renderTreeNodes(files)}
         </Tree>
-        }
-        
+      }
     </div>
     
   );

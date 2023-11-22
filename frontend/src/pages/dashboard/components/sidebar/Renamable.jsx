@@ -1,6 +1,6 @@
 import { useState } from "react"
 
-export default function RenamableName ( { id , setFiles  , name} ) {
+export default function RenamableName ( { id , setFiles  , name , sendData  , workspaceId }) {
     const [ text , setText ] = useState(name)
     const [ editable , setEditable ] = useState(true)
     const handleDoubleClick = () => {
@@ -21,6 +21,7 @@ export default function RenamableName ( { id , setFiles  , name} ) {
         }
         )
     }
+   
     const handleKeyDown = (e) => {
         if(e.code == 'Enter'){
             //update the setdata here
@@ -28,8 +29,14 @@ export default function RenamableName ( { id , setFiles  , name} ) {
             setFiles((gData) => {
              
                     loop( gData , id )
+                    if(sendData != null){
+                        sendData(gData , workspaceId)
+                        console.log(gData)
+                    }
+                    
                     return [...gData]
             })
+
             setEditable(true)
         }
     }

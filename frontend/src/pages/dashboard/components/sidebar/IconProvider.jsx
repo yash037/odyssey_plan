@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import EmojiPicker from 'emoji-picker-react';
 
-export default function Icon ({ emoji , setFiles , id}){
+export default function Icon ({ emoji , setFiles , id , sendData , workspaceId}){
     const [ emo , setEmo ] = useState(emoji)
     const [ editable , setEditable ] = useState(false)
     const handleDoubleClick = () => {
@@ -27,6 +27,10 @@ export default function Icon ({ emoji , setFiles , id}){
        
         setFiles((files) => {
             loop( files , id )
+            if( sendData != null ){
+                sendData(files , workspaceId)
+                console.log(files)
+            }
             return [...files]
         })
     }
