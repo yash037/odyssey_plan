@@ -371,7 +371,7 @@ export default function RecursiveSidebarMultiple({
   }
   const handleAddDoc = () => {
     const id = uuid()
-    window.open(frontendURL + `/documents/${id}` , '_blank')
+    window.open(frontendURL + `/doc/${id}` , '_blank')
     handleAddFile('doc' , id)
     setContent({type : 'doc', databaseId : id}) //this id corresponds to the file data in mongodb
   }
