@@ -373,7 +373,7 @@ export default function RecursiveSidebarMultiple({
     const id = uuid()
     window.open(frontendURL + `/doc/${id}` , '_blank')
     handleAddFile('doc' , id)
-    setContent({type : 'doc', databaseId : id}) //this id corresponds to the file data in mongodb
+    setContent({type : 'doc', databaseId : id}) 
   }
   const handleAddCalendar = () => {
     const id = uuid()
