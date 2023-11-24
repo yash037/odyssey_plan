@@ -127,7 +127,7 @@ export default function DashBoard(){
         <div className='dashboard'>
             
             <Navbar/>
-           
+
             <div className="sidebar-div">
                 <CapsuleButton handler={handleAdvancedSearch}>
                     Search

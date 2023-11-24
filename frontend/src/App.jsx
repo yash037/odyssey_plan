@@ -10,7 +10,8 @@ import { useState , useEffect } from "react";
 import DocumentEditor from './pages/document/document'
 import Redirect from "./pages/document/component/redirect";
 import Calendar, { RedirectCalendar } from "./pages/calendar/Calendar";
-import { Home } from "./Home";
+
+
 function App() {
   
   const [user,setUser]=useState(null);

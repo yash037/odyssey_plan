@@ -1,5 +1,6 @@
 
 const CapsuleButton = ( { text , handler ,children} ) => {
+
   const buttonStyle = {
     padding: '10px 20px',
     backgroundColor: '#9BBEC8',
@@ -12,6 +13,7 @@ const CapsuleButton = ( { text , handler ,children} ) => {
     fontWeight: '450', 
   };
   
+
     if(handler == null){
         handler = () => {}
     }

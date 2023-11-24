@@ -63,7 +63,9 @@
 }
 .file-explorer-buttons p {
   font-size:  20px;
+
   color: #164863;
+
 }
 .team-space-div{
   display: flex;
@@ -71,7 +73,9 @@
 }
 .team-space-div p {
   font-size:  20px;
+
   color: #164863;
+
   flex-grow: 1;
 }
 

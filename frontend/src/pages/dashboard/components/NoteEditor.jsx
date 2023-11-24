@@ -73,7 +73,9 @@ export default function NoteEditor({data , databaseId , metaData}) {
     <>
       <BlockNoteView 
       editor={editor} 
+
       theme={'light'}
+
       />
     </>
   )
