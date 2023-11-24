@@ -51,6 +51,7 @@ authRouter.post('/register',async (req,res,next)=>{
       username : data.username,
       password : hashedPassword,
       verified : false,
+      workspaces : []
     })
     const flag = await sendMail(data.email,data.Id);
     if(flag == true){

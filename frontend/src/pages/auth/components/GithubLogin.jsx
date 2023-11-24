@@ -7,9 +7,9 @@ export default function GithubLogger(){
         window.location.href = backendURL+'/auth/github';
     }
     return (
-        <button onClick={handleGithubClick} className='github'>
-            <img src={GithubIcon} alt="Github" className='githubimg' />
-            GitHub
+        <button onClick={handleGithubClick} className='github-btn'>
+            <img src={GithubIcon} alt="Github" className='github-img' />
+            <span className='github-text'>GitHub</span>
         </button>
     )
 }

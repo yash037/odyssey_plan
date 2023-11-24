@@ -4,7 +4,9 @@ const mongoose=require('mongoose');
 const documentSchema = new mongoose.Schema({
     Id : String,
     data : Object,
-    activeMembers : [ { Id : String , name : String}],
+    type : String,
+    activeMembers : [ { Id : String , name : String } ],
+    metaData : Object
 })
 
 module.exports = { documentSchema }

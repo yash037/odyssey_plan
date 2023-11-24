@@ -8,6 +8,7 @@ const mongoose = require('mongoose')
 
 const Document = mongoose.model('document' , require('./database/documentSchema').documentSchema )
 const User = mongoose.model('user' , require('./database/userSchema').userSchema )
+const Workspace = mongoose.model('workspaces' , require('./database/workspaceSchema.js').workspaceSchema)
 
 const io = Server(server , {
     cors : {
@@ -58,12 +59,16 @@ io.on('connection' , (socket) => {
         await doc.save()
         socket.broadcast.to(documentId).emit( 'member-left' , memberId.substr( 1 , memberId.length - 1 ));
     })
-
-    socket.on( 'cursor-movement' , ( documentId , memberId , selection) => {
-         console.log(memberId.substr( 1 , memberId.length - 1 ) + ' moved')
-        socket.to(documentId).emit( 'cursor-movement' , memberId.substr( 1 , memberId.length - 1 ) , selection );
+    socket.on('join-folderstructure' , (workspaceId) => {
+        socket.join(workspaceId)
+        console.log('joined' , workspaceId) 
     })
-})
+    var count = 0
+    socket.on('change-folderstructure' , (workspaceId) => {
+        console.log('changed',workspaceId , count++)
+        socket.to(workspaceId).emit('load-filestructure' , workspaceId)
+    })
+}) 
 
 mongoose.connect("mongodb://127.0.0.1:27017/Odeysey").then(() => {
     console.log('mongodb is online');

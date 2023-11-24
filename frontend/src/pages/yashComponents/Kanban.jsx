@@ -1,18 +1,17 @@
 import React from "react";
 import Sidebar from "./Sidebar";
 import Box from "@mui/material/Box";
-import Navbar from "./Navbar";
-import TextEditor from "../document/component/Editor";
+import Navbar from "../dashboard/Navbar";
 
-export default function Editor() {
+export default function Kanban() {
   return (
     <>
       <div className="bgcolor">
         <Navbar />
         <Box height={70} />
-        <Box sx={{ display: "flex", justifyContent: "center"}}>
+        <Box sx={{ display: "flex" }}>
           <Sidebar />
-          <TextEditor />
+          kanban here
         </Box>
       </div>
     </>

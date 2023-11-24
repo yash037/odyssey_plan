@@ -1,4 +1,4 @@
-import './css/TextArea.css'
+import '../css/TextArea.css'
 export default function TextArea ({setText , value}) {
     const handleChange = (e) => {
         setText(e.target.value)

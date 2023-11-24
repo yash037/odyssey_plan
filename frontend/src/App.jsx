@@ -9,7 +9,8 @@ import { send } from './global/request'
 import { useState , useEffect } from "react";
 import DocumentEditor from './pages/document/document'
 import Redirect from "./pages/document/component/redirect";
-
+import Calendar, { RedirectCalendar } from "./pages/calendar/Calendar";
+import { Home } from "./Home";
 function App() {
   
   const [user,setUser]=useState(null);
@@ -63,9 +64,11 @@ function App() {
       <>
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<DashBoard></DashBoard>}/>
-            <Route path='/documents' exact element={<Redirect></Redirect>}/>  
-            <Route path='/documents/:id' exact element={<DocumentEditor></DocumentEditor>} /> 
+            <Route path="/" element={<DashBoard/>}/>
+            <Route path='/doc' exact element={<Redirect/>}/>  
+            <Route path='/doc/:id' exact element={<DocumentEditor/>} /> 
+            <Route path="/calendar" exact element={<RedirectCalendar/>}></Route>
+            <Route path="/calendar/:id" exact element={<Calendar/>}></Route>
           </Routes>
         </BrowserRouter>
       </>
@@ -74,7 +77,7 @@ function App() {
   else{
     return (
       <>
-        <Auth></Auth>
+        <Home/>
       </>
     )
     

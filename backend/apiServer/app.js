@@ -17,7 +17,7 @@
     res.setHeader('Access-Control-Allow-Credentials', 'true'); // Allow credentials (cookies)
     next();
   });
-  app.use(bodyParser.json());
+  app.use(bodyParser.json( { limit : '50mb' } ));
 
   const mongoose = require('mongoose');
   const User = mongoose.model('User',require('./database/schema/userSchema').userSchema);
@@ -35,6 +35,8 @@
   }));
   app.use(passport.initialize());
   app.use(passport.session());
+  
+
   app.use('/auth', authRouter)
   
 
